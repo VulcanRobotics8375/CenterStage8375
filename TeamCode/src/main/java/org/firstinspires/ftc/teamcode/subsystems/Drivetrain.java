@@ -41,7 +41,7 @@ public class Drivetrain extends Subsystem implements DrivetrainImpl {
         if(Robot.runMode == RobotRunMode.AUTONOMOUS) {
             setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         } else {
-            setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
         //set up IMU
@@ -77,7 +77,7 @@ public class Drivetrain extends Subsystem implements DrivetrainImpl {
     }
 
     public void mechanumDrive(double forward, double strafe, double turn) {
-        double multiplier = Math.sqrt(2.0) / 2.0;
+        double multiplier = Math.sqrt(2.0);
         forward = joystickCurve(forward, JoystickCurve.MODIFIED_CUBIC);
         strafe = joystickCurve(strafe, JoystickCurve.MODIFIED_CUBIC);
         turn = joystickCurve(turn, JoystickCurve.MODIFIED_CUBIC);

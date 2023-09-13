@@ -51,7 +51,7 @@ public abstract class RobotConfig {
 
     public HardwareMap hardwareMap;
     //localization
-    public StandardTrackingWheelLocalizer localizer;
+//    public StandardTrackingWheelLocalizer localizer;
 
     //Subsystem objects go here
     //IMPORTANT:: Don't add more than one class that implements DrivetrainInterface, things will break
