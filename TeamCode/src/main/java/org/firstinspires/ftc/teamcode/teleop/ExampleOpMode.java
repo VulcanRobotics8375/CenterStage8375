@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -22,8 +23,11 @@ public class ExampleOpMode extends OpModePipeline {
     Pose2d position = new Pose2d();
     SimplePID turnPID = new SimplePID(0.04, 0.0, 0.0, -1.0, 1.0);
     double turnPower = 0.0;
+
     private double angle;
     private int i = 0;
+
+    FtcDashboard dash;
 
     @Override
     public void init() {
@@ -34,6 +38,7 @@ public class ExampleOpMode extends OpModePipeline {
 
     public void loop() {
         Robot.update();
+        dash = FtcDashboard.getInstance();
 
         subsystems.intake.run(gamepad1.a);
         subsystems.lift.run((gamepad1.right_trigger > 0) ? gamepad1.right_trigger : -gamepad1.left_trigger);
