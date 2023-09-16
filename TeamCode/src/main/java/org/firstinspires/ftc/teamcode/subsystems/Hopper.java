@@ -15,8 +15,6 @@ public class Hopper extends Subsystem {
     private boolean button = false;
     private final double OPEN = 0.69;
     private final double CLOSED = 0.232;
-
-    private final double LIFT_DOWN = 0.5;
     private double servoPos = CLOSED;
     private final double closedLift = 50;
 
@@ -32,7 +30,6 @@ public class Hopper extends Subsystem {
         } else if(!button && this.button) {
             this.button = false;
         }
-        if (liftPos <= LIFT_DOWN) { servoPos = CLOSED; }
         door.setPosition(servoPos);
     }
     public void test(double stick) {
