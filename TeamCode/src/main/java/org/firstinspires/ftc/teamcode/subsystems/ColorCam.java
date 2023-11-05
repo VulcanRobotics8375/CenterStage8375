@@ -1,17 +1,14 @@
-package org.firstinspires.ftc.teamcode.vision.apriltag;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import android.util.Size;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.teamcode.robot.EmptyConfig;
-import org.firstinspires.ftc.teamcode.robotcorelib.opmode.OpModePipeline;
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
-import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -20,27 +17,23 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.Arrays;
+public class ColorCam {
 
-@Autonomous(name = "AprilTagOpMode")
-public class AprilTagOpMode extends OpModePipeline {
-    EmptyConfig subsystems = new EmptyConfig();
+    HardwareMap hardwareMap;
+    WebcamName web;
+    OpenCvCamera camera;
     AprilTagProcessor tagProcessor;
     VisionPortal portal;
 
-    @Override
+    public ColorCam(HardwareMap hardwareMap) {
+        this.hardwareMap = hardwareMap;
+    }
+
     public void init() {
-        super.subsystems = subsystems;
-        runMode = RobotRunMode.TELEOP;
-        super.init();
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        web = hardwareMap.get(WebcamName.class, "Webcam");
+        camera = OpenCvCameraFactory.getInstance().createWebcam(web, cameraMonitorViewId);
 
-        WebcamName web = hardwareMap.get(WebcamName.class, "Webcam 0");
-        WebcamName greyweb = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(web, cameraMonitorViewId);
-
-        AprilTagProcessor tagProcessor = new AprilTagProcessor.Builder()
+        tagProcessor = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
                 .setDrawCubeProjection(true)
                 .setDrawTagID(true)
@@ -48,14 +41,15 @@ public class AprilTagOpMode extends OpModePipeline {
                 .setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
                 .build();
 
-        VisionPortal portal = new VisionPortal.Builder()
+        portal = new VisionPortal.Builder()
                 .addProcessor(tagProcessor)
                 .setCamera((CameraName) camera)
-                .setCameraResolution(new Size(640,480))
+                .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)
                 .build();
         portal.setProcessorEnabled(tagProcessor, true);
+
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -70,14 +64,19 @@ public class AprilTagOpMode extends OpModePipeline {
         tagProcessor.setPoseSolver(AprilTagProcessor.PoseSolver.APRILTAG_BUILTIN);
     }
 
-    public void loop() {
+    public void run() {
+
+    }
+
+    public void test(Telemetry telemetry, boolean button) {
         if (tagProcessor.getDetections().size() > 0) {
             AprilTagDetection detect = tagProcessor.getDetections().get(0);
             VectorF fieldPos = detect.metadata.fieldPosition;
-            telemetry.addData("pose", detect.ftcPose.x);
         }
-        Robot.update();
+
+
         telemetry.addData("Pose solving average time:", String.valueOf(tagProcessor.getPerTagAvgPoseSolveTime()));
         telemetry.update();
     }
+
 }

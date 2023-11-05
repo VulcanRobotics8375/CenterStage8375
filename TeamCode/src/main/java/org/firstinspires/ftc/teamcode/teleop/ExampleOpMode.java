@@ -40,9 +40,9 @@ public class ExampleOpMode extends OpModePipeline {
         Robot.update();
         dash = FtcDashboard.getInstance();
 
-        subsystems.intake.run(gamepad1.a);
-        subsystems.lift.run((gamepad1.right_trigger > 0) ? gamepad1.right_trigger : -gamepad1.left_trigger);
-        subsystems.hopper.run(gamepad1.b, subsystems.lift.getLiftPos());
+//        subsystems.intake.run(gamepad1.a);
+//        subsystems.lift.run((gamepad1.right_trigger > 0) ? gamepad1.right_trigger : -gamepad1.left_trigger);
+        subsystems.hopper.test(gamepad1.left_stick_y);
 //        subsystems.flywheel.run(gamepad1.x, gamepad1.y, gamepad1.b);
 
 //        Acceleration accel = subsystems.drivetrain.getIMU().getAcceleration();
