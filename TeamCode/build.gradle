@@ -27,4 +27,5 @@ dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
+    implementation 'org.openftc:apriltag:2.0.0'
 }
