@@ -8,14 +8,16 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robotcorelib.math.filters.ExponentialMovingAverage;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.Subsystem;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
 
 
 public class Intake extends Subsystem {
     DcMotorEx intake;
-    private boolean button = false;
     private double power = 0;
     private final double MULTIPLIER = 0.01;
     private ExponentialMovingAverage emaCurrent = new ExponentialMovingAverage(0, 0.95);
+
+    private Switch aSwitch = new Switch();
 
     public CRServo counterRoller;
 
@@ -37,12 +39,9 @@ public class Intake extends Subsystem {
     }
 
     public void run(boolean button) {
-        if(button && !this.button) {
-            this.button = true;
+        if (aSwitch.simpleSwitch(button)) {
             power = 1.0 - power;
             armDown = !armDown;
-        } else if(!button && this.button) {
-            this.button = false;
         }
         if(armDown){
             armDown();

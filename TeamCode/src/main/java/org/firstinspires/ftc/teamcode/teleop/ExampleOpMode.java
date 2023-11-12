@@ -38,6 +38,7 @@ public class ExampleOpMode extends OpModePipeline {
 //        subsystems.intake.test(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.right_stick_y);
         subsystems.intake.run(gamepad1.a);
 //        subsystems.lift.run((gamepad1.right_trigger > 0) ? gamepad1.right_trigger : -gamepad1.left_trigger);
+        subsystems.lift.run(-gamepad1.right_stick_y);
 
 //        subsystems.flywheel.run(gamepad1.x, gamepad1.y, gamepad1.b);
 
