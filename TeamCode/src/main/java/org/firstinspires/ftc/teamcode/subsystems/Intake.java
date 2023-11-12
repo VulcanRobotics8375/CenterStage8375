@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robotcorelib.math.filters.ExponentialMovingAverage;
@@ -12,52 +14,77 @@ public class Intake extends Subsystem {
     DcMotorEx intake;
     private boolean button = false;
     private double power = 0;
-    private double SERVO_UP = 0.32,SERVO_DOWN = 0.02;
     private final double MULTIPLIER = 0.01;
     private ExponentialMovingAverage emaCurrent = new ExponentialMovingAverage(0, 0.95);
+
+    public CRServo counterRoller;
+
     public Servo leftServo,rightServo;
     public double servoPosLeft = 0.5, servoPosRight = 0.5;
-    private double servoPos = SERVO_UP;
+    public boolean armDown = false;
+    public final double leftArmUp = 0.7;
+    public final double leftArmDown = 0.001;
+    public final double rightArmUp = 0.322;
+    public final double rightArmDown = 1.0;
 
     public void init() {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        intake.setDirection(DcMotorEx.Direction.REVERSE);
-        leftServo = hardwareMap.get(Servo.class, "left_servo");
-        rightServo = hardwareMap.get(Servo.class, "right_servo");
-    }
-
-    private void setServos(double input) {
-        servoPosLeft += input;
-//        servoPosRight -= input;
-        leftServo.setPosition(servoPosLeft);
-//        rightServo.setPosition(servoPosRight);
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        counterRoller = hardwareMap.get(CRServo.class, "counterroller");
+        counterRoller.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftServo = hardwareMap.get(Servo.class, "intake_arm_left");
+        rightServo = hardwareMap.get(Servo.class, "intake_arm_right");
     }
 
     public void run(boolean button) {
         if(button && !this.button) {
             this.button = true;
             power = 1.0 - power;
-            servoPos = (servoPos == SERVO_UP) ? SERVO_DOWN : SERVO_UP;
+            armDown = !armDown;
         } else if(!button && this.button) {
             this.button = false;
         }
-        leftServo.setPosition(servoPos);
+        if(armDown){
+            armDown();
+        } else {
+            armUp();
+        }
         intake.setPower(power);
+        counterRoller.setPower(power);
 
 //        emaCurrent.run(intake.getCurrent(CurrentUnit.AMPS));
 //        telemetry.addData("intake current", Math.round(emaCurrent.getEstimate()*10.0)/10.0);
     }
-    public void test(double stick, boolean button) {
-        if(button && !this.button) {
-            this.button = true;
-            power = 1.0 - power;
-        }
-        else if(!button && this.button) { this.button = false; }
-        intake.setPower(power);
+
+    public void intake(boolean button) {
+        intake.setPower(button ? 1.0 : 0.0);
+        counterRoller.setPower(button ? 1.0 : 0.0);
+    }
+
+    public void armUp() {
+        leftServo.setPosition(leftArmUp);
+        rightServo.setPosition(rightArmUp);
+    }
+
+    public void armDown() {
+        leftServo.setPosition(leftArmDown);
+        rightServo.setPosition(rightArmDown);
+    }
+
+    private void setServos(double input) {
+        servoPosRight = Range.clip(servoPosRight + input, 0.0, 1.0);
+//        servoPosRight -= input;
+        rightServo.setPosition(servoPosRight);
+//        rightServo.setPosition(servoPosRight);
+    }
+
+    public void test(boolean intakeButton, boolean counterRollButton, boolean outtakeButton, double stick) {
+        intake.setPower(outtakeButton ? (intakeButton ? 1.0 : -1.0) : 0.0);
+        counterRoller.setPower(outtakeButton ? (counterRollButton || intakeButton ? 1.0 : -1.0) : 0.0);
         setServos(stick * MULTIPLIER);
 
-        telemetry.addData("left intake servo pos: ", servoPosLeft);
-//        telemetry.addData("right intake servo pos: ", servoPosRight);
+//        telemetry.addData("left intake servo pos: ", servoPosLeft);
+        telemetry.addData("right intake servo pos: ", servoPosRight);
     }
 
 

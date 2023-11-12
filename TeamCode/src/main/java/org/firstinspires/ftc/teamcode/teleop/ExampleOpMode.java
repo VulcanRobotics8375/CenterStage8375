@@ -35,10 +35,9 @@ public class ExampleOpMode extends OpModePipeline {
     public void loop() {
         Robot.update();
 
-//        subsystems.intake.run(gamepad1.a);
-        subsystems.intake.test(gamepad2.left_stick_y, gamepad1.a);
-        subsystems.lift.run((gamepad1.right_trigger > 0) ? gamepad1.right_trigger : -gamepad1.left_trigger);
-//        subsystems.hopper.run(gamepad1.b, subsystems.lift.getLiftPos());
+//        subsystems.intake.test(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.right_stick_y);
+        subsystems.intake.run(gamepad1.a);
+//        subsystems.lift.run((gamepad1.right_trigger > 0) ? gamepad1.right_trigger : -gamepad1.left_trigger);
 
 //        subsystems.flywheel.run(gamepad1.x, gamepad1.y, gamepad1.b);
 
@@ -53,14 +52,14 @@ public class ExampleOpMode extends OpModePipeline {
 //        }
 //        secTime = accel.acquisitionTime;
 
-        i++;
-        if(i % 1 == 0) {
-            angle = subsystems.drivetrain.getIMU().getAngularOrientation().firstAngle / 180 * Math.PI;
-            if(angle < 0) {angle += 2*Math.PI;}
-        }
+//        i++;
+//        if(i % 1 == 0) {
+//            angle = subsystems.drivetrain.getIMU().getAngularOrientation().firstAngle / 180 * Math.PI;
+//            if(angle < 0) {angle += 2*Math.PI;}
+//        }
 //        turnPower = -turnPID.run(0, angle);
-        subsystems.drivetrain.setPowers(DriveKinematics.mecanumFieldVelocityToWheelVelocities(new Pose2d(0, 0, angle), new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x)));
-//        subsystems.drivetrain.mechanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+//        subsystems.drivetrain.setPowers(DriveKinematics.mecanumFieldVelocityToWheelVelocities(new Pose2d(0, 0, angle), new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x)));
+        subsystems.drivetrain.mechanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
 
 //        telemetry.addData("robot angle", angle);
