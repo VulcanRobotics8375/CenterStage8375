@@ -35,8 +35,8 @@ public class Drivetrain extends Subsystem implements DrivetrainImpl {
         br = hardwareMap.get(DcMotorEx.class, "back_right");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setDrivetrainMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         if(Robot.runMode == RobotRunMode.AUTONOMOUS) {
             setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
