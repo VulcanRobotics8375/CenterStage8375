@@ -35,10 +35,10 @@ public class ExampleOpMode extends OpModePipeline {
     public void loop() {
         Robot.update();
 
-//        subsystems.intake.test(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.right_stick_y);
+//        subsystems.intake.test(gamepad2.a, gamepad2.b, gamepad2.x, -gamepad2.right_stick_y);
         subsystems.intake.run(gamepad1.a);
 //        subsystems.lift.run((gamepad1.right_trigger > 0) ? gamepad1.right_trigger : -gamepad1.left_trigger);
-        subsystems.lift.run(-gamepad1.right_stick_y);
+        subsystems.lift.run(-gamepad2.left_stick_y);
 
 //        subsystems.flywheel.run(gamepad1.x, gamepad1.y, gamepad1.b);
 

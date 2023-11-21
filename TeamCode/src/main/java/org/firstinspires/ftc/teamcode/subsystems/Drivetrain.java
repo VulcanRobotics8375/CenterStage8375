@@ -22,7 +22,7 @@ public class Drivetrain extends Subsystem implements DrivetrainImpl {
     private DcMotorEx fl, fr, bl, br;
     private BNO055IMU imu;
     public static final DriveMode driveMode = DriveMode.MECANUM;
-    public static final DrivetrainVelocityMode velocityMode = DrivetrainVelocityMode.DRIVE_MOTOR_ENCODERS;
+    public static final DrivetrainVelocityMode velocityMode = DrivetrainVelocityMode.FEEDFORWARD;
 
 
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
