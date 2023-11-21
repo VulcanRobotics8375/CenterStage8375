@@ -24,10 +24,10 @@ public class Intake extends Subsystem {
     public Servo leftServo,rightServo;
     public double servoPosLeft = 0.5, servoPosRight = 0.5;
     public boolean armDown = false;
-    public final double leftArmUp = 0.7;
-    public final double leftArmDown = 0.001;
-    public final double rightArmUp = 0.322;
-    public final double rightArmDown = 1.0;
+    public final double leftArmUp = 0.73;
+    public final double leftArmDown = 0.112;
+    public final double rightArmUp = 0.01;
+    public final double rightArmDown = 0.643;
 
     public void init() {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
@@ -71,19 +71,19 @@ public class Intake extends Subsystem {
     }
 
     private void setServos(double input) {
-        servoPosRight = Range.clip(servoPosRight + input, 0.0, 1.0);
-//        servoPosRight -= input;
-        rightServo.setPosition(servoPosRight);
+//        servoPosRight = Range.clip(servoPosRight + input, 0.0, 1.0);
 //        rightServo.setPosition(servoPosRight);
+        servoPosLeft = Range.clip(servoPosLeft - input, 0.0, 1.0);
+        leftServo.setPosition(servoPosLeft);
     }
 
     public void test(boolean intakeButton, boolean counterRollButton, boolean outtakeButton, double stick) {
-        intake.setPower(outtakeButton ? (intakeButton ? 1.0 : -1.0) : 0.0);
+        intake.setPower(outtakeButton || intakeButton ? (intakeButton ? 1.0 : -1.0) : 0.0);
         counterRoller.setPower(outtakeButton ? (counterRollButton || intakeButton ? 1.0 : -1.0) : 0.0);
         setServos(stick * MULTIPLIER);
 
-//        telemetry.addData("left intake servo pos: ", servoPosLeft);
-        telemetry.addData("right intake servo pos: ", servoPosRight);
+        telemetry.addData("left intake servo pos: ", servoPosLeft);
+//        telemetry.addData("right intake servo pos: ", servoPosRight);
     }
 
 
