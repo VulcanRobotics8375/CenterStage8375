@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -13,11 +14,16 @@ import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
 
 public class Intake extends Subsystem {
     DcMotorEx intake;
+
+    DigitalChannel breakbeam;
     private double power = 0;
     private final double MULTIPLIER = 0.01;
     private ExponentialMovingAverage emaCurrent = new ExponentialMovingAverage(0, 0.95);
 
-    private Switch aSwitch = new Switch();
+    private Switch aSwitch, bSwitch = new Switch();
+
+
+    public int breakCount = 0;
 
     public CRServo counterRoller;
 
@@ -32,6 +38,7 @@ public class Intake extends Subsystem {
     public void init() {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        breakbeam = hardwareMap.get(DigitalChannel.class, "breakbeam");
         counterRoller = hardwareMap.get(CRServo.class, "counterroller");
         counterRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         leftServo = hardwareMap.get(Servo.class, "intake_arm_left");
@@ -48,8 +55,16 @@ public class Intake extends Subsystem {
         } else {
             armUp();
         }
+
+        if (bSwitch.simpleSwitch(breakbeam.getState())) { breakCount ++; }
+        if (breakCount >= 2) {power = 0;}
+
         intake.setPower(power);
         counterRoller.setPower(power);
+
+        telemetry.addData("Breakbeam state", breakbeam.getState());
+        telemetry.addData("Breakbeam count", breakCount);
+
 
 //        emaCurrent.run(intake.getCurrent(CurrentUnit.AMPS));
 //        telemetry.addData("intake current", Math.round(emaCurrent.getEstimate()*10.0)/10.0);
@@ -85,8 +100,6 @@ public class Intake extends Subsystem {
         telemetry.addData("left intake servo pos: ", servoPosLeft);
 //        telemetry.addData("right intake servo pos: ", servoPosRight);
     }
-
-
 
 
 
