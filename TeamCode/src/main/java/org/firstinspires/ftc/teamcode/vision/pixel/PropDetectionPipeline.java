@@ -25,9 +25,16 @@ public class PropDetectionPipeline extends OpenCvPipeline {
     Scalar highHSV = new Scalar(5, 255, 255), lowHSV = new Scalar(0, 50, 50);
     Scalar highPIX = new Scalar(255, 50, 255), lowPIX = new Scalar(0, 0, 0);
 
+    private Mat lmat = new Mat();
+
+    public int propLocation = 0;
+
+    double hScale = 2.0 / 3.0;
+    double wScale = 2.0 / 3.0;
 
 
-    private ArrayList<RotatedRect> find (List <MatOfPoint> points, Mat input) {
+
+    private ArrayList<RotatedRect> find (List <MatOfPoint> points) {
         ArrayList<RotatedRect> rps = new ArrayList<RotatedRect>();
         for (MatOfPoint cnt : points) {
             RotatedRect rotrect = Imgproc.minAreaRect(new MatOfPoint2f(cnt.toArray()));
@@ -80,25 +87,24 @@ public class PropDetectionPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        Scalar white = new Scalar(255, 255, 255);
-        Scalar blue = new Scalar(0, 255, 255);
-        ArrayList<RotatedRect> pixels = find(contour(input, highPIX, lowPIX), input);
-        ArrayList<RotatedRect> spikes = find(contour(input, highHSV, lowHSV), input);
-        drawRotatedRectange(input, sort(pixels), blue);
-
-//        ArrayList<RotatedRect> selectspikes = insertionSortForNoReasonButBoredAndInGeneralMeeting(spikes, 3);
-//        for (RotatedRect spike : selectspikes) {
-//            drawRotatedRectange(input, spike, white);
-//            Imgproc.putText(input, Integer.toString(c), spike.center, 1, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, white);
-//            c++;
-//        }
+//        Scalar white = new Scalar(255, 255, 255);
+//        Scalar blue = new Scalar(0, 255, 255);
+//        Point p1 = new Point((input.width() - (input.width() * wScale /2)), 0);
+//        Point p2 = new Point((input.width() + (input.width() * wScale /2)), (input.height() * hScale));
+        RotatedRect prop = sort(find(contour(input, highPIX, lowPIX)));
+//        ArrayList<RotatedRect> spikes = find(contour(input, highHSV, lowHSV), input);
+        drawRotatedRectange(input, prop, new Scalar(0, 255, 255));
 
 
-//        pixels = insertionSortForNoReasonButBoredAndInGeneralMeeting(pixels, 1);
+        if (prop.center.x < input.width()/3.0) { propLocation = 1; }
+        if (prop.center.x > (2 * input.width())/3.0) { propLocation = 3; }
+        else { propLocation = 2; }
 
-//        Imgproc.putText(input, Integer.toString(c), new Point(100,100), 1, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, white);
-//        Imgproc.putText(input, Integer.toString(selectspikes.size()), new Point(50,100), 1, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, white);
 
         return input;
+    }
+
+    public int getPropLocation() {
+        return propLocation;
     }
 }
