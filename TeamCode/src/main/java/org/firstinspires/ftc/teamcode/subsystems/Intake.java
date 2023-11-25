@@ -3,6 +3,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -39,6 +40,7 @@ public class Intake extends Subsystem {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         breakbeam = hardwareMap.get(DigitalChannel.class, "breakbeam");
+        breakbeam.setMode(DigitalChannel.Mode.INPUT);
         counterRoller = hardwareMap.get(CRServo.class, "counterroller");
         counterRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         leftServo = hardwareMap.get(Servo.class, "intake_arm_left");
@@ -57,7 +59,7 @@ public class Intake extends Subsystem {
         }
 
         if (bSwitch.simpleSwitch(breakbeam.getState())) { breakCount ++; }
-        if (breakCount >= 2) {power = 0;}
+        if (breakCount >= 2) {power = -1;}
 
         intake.setPower(power);
         counterRoller.setPower(power);
