@@ -45,6 +45,17 @@ public class PropDetectionPipeline extends OpenCvPipeline {
 
         return rps;
     }
+    private ArrayList<Rect> findR (List <MatOfPoint> points) {
+        ArrayList<Rect> rps = new ArrayList<>();
+        for (MatOfPoint cnt : points) {
+            Rect rect = Imgproc.boundingRect(new MatOfPoint2f(cnt.toArray()));
+            if (rect.area() > 15) {
+                rps.add(rect);
+            }
+        }
+
+        return rps;
+    }
 
     private void drawRotatedRectange(Mat input, RotatedRect rotrect, Scalar color) {
         Point[] rpoints = new Point[4];
@@ -91,14 +102,21 @@ public class PropDetectionPipeline extends OpenCvPipeline {
 //        Scalar blue = new Scalar(0, 255, 255);
 //        Point p1 = new Point((input.width() - (input.width() * wScale /2)), 0);
 //        Point p2 = new Point((input.width() + (input.width() * wScale /2)), (input.height() * hScale));
-        RotatedRect prop = sort(find(contour(input, highPIX, lowPIX)));
-//        ArrayList<RotatedRect> spikes = find(contour(input, highHSV, lowHSV), input);
-        drawRotatedRectange(input, prop, new Scalar(0, 255, 255));
-
-
-        if (prop.center.x < input.width()/3.0) { propLocation = 1; }
-        if (prop.center.x > (2 * input.width())/3.0) { propLocation = 3; }
-        else { propLocation = 2; }
+//        RotatedRect prop = sort(find(contour(input, highHSV, lowHSV)));
+//        ArrayList<RotatedRect> spikes = find(contour(input, highHSV, lowHSV));
+        ArrayList<Rect> spik = findR(contour(input, highHSV, lowHSV));
+        for (Rect spike : spik) {
+            Imgproc.rectangle(input, spike, new Scalar(255,255,255));
+        }
+//        drawRotatedRectange(input, prop, new Scalar(0, 255, 255));
+//
+//
+//
+//
+//
+//        if (prop.center.x < input.width()/3.0) { propLocation = 1; }
+//        if (prop.center.x > (2 * input.width())/3.0) { propLocation = 3; }
+//        else { propLocation = 2; }
 
 
         return input;
