@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision.pixel;
 
+import org.checkerframework.checker.units.qual.A;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -10,6 +11,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.opencv.core.MatOfPoint;
 
+import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +66,7 @@ public class PixelCounterPipeline extends OpenCvPipeline {
 
 class para {
     Point p1,p2,p3,p4;
-    double s1, s2;
+    double a, b, c, d;
     Mat img;
     public para(Point p1, Point p2, Point p3, Point p4, Mat img) {
         this.p1 = p1;
@@ -72,13 +74,40 @@ class para {
         this.p3 = p3;
         this.p4 = p4;
         this.img = img;
-        s1 = (p1.y - p2.y) / (p1.x - p2.x);
-        s2 = (p2.y - p3.y) / (p2.x - p3.x);
+        a = p2.x - p1.x;
+        b = p2.y - p1.y;
+
+        d = p4.x - p1.x;
+        c = p4.y - p1.y;
+
     }
 
-    public int fillCheck() {
+    public int fillCheck(int increment, Mat input) {
         int count = 0;
+        double x = p1.x, y=p1.y;
+        for (int n=0; n < increment; n++) {
+            x += d/increment;
+            y += c/increment;
+            for (int i=0; i < increment; i++) {
+                x += a/increment;
+                y += b/increment;
+            }
+            if (inRange(input.get((int)x, (int)y), new Scalar(0,0,0), new Scalar(255,255,255))) {
+                count ++;
+            }
+        }
+        return count;
+    }
 
+    private boolean inRange(double[] pixel, Scalar lowHSV, Scalar highHSV) {
+        if (lowHSV.val[0] > pixel[0] && pixel[0] < highHSV.val[0]) {
+            if (lowHSV.val[1] > pixel[1] && pixel[1] < highHSV.val[1]) {
+                if (lowHSV.val[2] > pixel[2] && pixel[2] < highHSV.val[2]) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
