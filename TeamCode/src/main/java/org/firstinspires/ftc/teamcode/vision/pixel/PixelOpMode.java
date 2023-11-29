@@ -37,21 +37,21 @@ public class PixelOpMode extends LinearOpMode {
 
     OpenCvWebcam webcam;
 
-    public static int Lx = 422;
-    public static int Ly = 383;
-    public static int La = 17;
-    public static int Lc = 73;
-    public static int Ld = 58;
+    public static int Rx = 402;
+    public static int Ry = 400;
+    public static int Ra = 16;
+    public static int Rc = 76;
+    public static int Rd = 48;
     public static int Cx = 176;
     public static int Cy = 383;
     public static int Ca = 190;
     public static int Cc = 6;
     public static int Cd = 0;
-    public static int Rx = 103;
-    public static int Ry = 383;
-    public static int Ra = 17;
-    public static int Rc = 73;
-    public static int Rd = -76;
+    public static int Lx = 103;
+    public static int Ly = 383;
+    public static int La = 17;
+    public static int Lc = 73;
+    public static int Ld = -76;
 
     @Override
     public void runOpMode() throws InterruptedException {

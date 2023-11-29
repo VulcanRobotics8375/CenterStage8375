@@ -42,28 +42,26 @@ public class PixelCounterPipeline extends OpenCvPipeline {
     public int growthx = 0;
     public int growthy = 0;
 
-    public int Lx = 422;
-    public int Ly = 383;
-    public int La = 17;
-    public int Lc = 73;
-    public int Ld = 58;
+    public int Rx = 422;
+    public int Ry = 383;
+    public int Ra = 17;
+    public int Rc = 73;
+    public int Rd = 58;
     public int Cx = 176;
     public int Cy = 383;
     public int Ca = 190;
     public int Cc = 6;
     public int Cd = 0;
-    public int Rx = 103;
-    public int Ry = 383;
-    public int Ra = 17;
-    public int Rc = 73;
-    public int Rd = -76;
+    public int Lx = 103;
+    public int Ly = 383;
+    public int La = 17;
+    public int Lc = 73;
+    public int Ld = -76;
 
 
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.resize(input, input, new Size(640, 480));
-
-
 
 //        int sx = 250;
 //        int sy = 250;
