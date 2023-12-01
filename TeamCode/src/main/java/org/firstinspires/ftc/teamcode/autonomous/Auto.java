@@ -20,11 +20,9 @@ public class Auto extends AutoPipeline {
                 .speed(0.5)
                 .turnSpeed(0.5)
                 .maintainHeading(true)
-                .start(new Pose2d(-20, 20, 0))
-                .addGuidePoint(new Pose2d(0,0,0))
-                .addGuidePoint(new Pose2d(20, 20, 0))
-                .addGuidePoint(new Pose2d(40, 0, 0))
-                .end(new Pose2d(60, 20, 0))
+                .start(new Pose2d(0, 0, 0))
+                .addGuidePoint(new Pose2d(10,10,0))
+                .end(new Pose2d(20, 10, 0))
                 .build();
         MainConfig subsystems = new MainConfig();
 

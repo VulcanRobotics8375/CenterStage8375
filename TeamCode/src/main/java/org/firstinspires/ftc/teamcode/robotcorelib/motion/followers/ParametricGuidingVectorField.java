@@ -34,6 +34,7 @@ public class ParametricGuidingVectorField extends Follower {
     public volatile boolean following;
     private PID velocityPid = new PID(1.0, 0.0, 0.0);
     private PID turnPid = new PID(-1.5, -0.01, 0.0);
+    private SimplePID turnPID = new SimplePID(-1.5, 0.01, 0.0, -0.8, 0.8);
 
     private OpMode opMode;
 
@@ -57,10 +58,10 @@ public class ParametricGuidingVectorField extends Follower {
     private final double CROSS_TRACK_ERROR_GAIN = 0.2;
 
     private double totalDistance;
-    
+
     public ParametricGuidingVectorField() { PIDinit(); }
 
-    public ParametricGuidingVectorField(LinearOpMode opMode) { 
+    public ParametricGuidingVectorField(LinearOpMode opMode) {
         this.opMode = opMode;
         PIDinit();
     }
@@ -133,14 +134,15 @@ public class ParametricGuidingVectorField extends Follower {
 
         Vector resultant = tangentVec.plus(crossTrackVec);
         double vectorAngle = tangentVec.angle();
-        double turnOutput = turnPid.getOutput(0, Angle.diff(robotPose.getHeading(), headingFunction.value((double)((int) (CTEt * (numPoints - 1) + 1)) / (numPoints - 1.0))));
+        double turnOutput = turnPID.run(Angle.diff(robotPose.getHeading(), headingFunction.value((double)((int) (CTEt * (numPoints - 1) + 1)) / (numPoints - 1.0))));
+//        double turnOutput = turnPid.getOutput(0, Angle.diff(robotPose.getHeading(), headingFunction.value((double)((int) (CTEt * (numPoints - 1) + 1)) / (numPoints - 1.0))));
 //        double turnOutput = turnPid.run(Angle.diff(robotPose.getHeading(), 0));
 //            double turnOutput = turnPid.run(MathUtils.calcAngularError(Math.PI/2, robotPose.getHeading()));
         double translationalVectorScalar = 1.0 - (2.0 * Math.abs(turnOutput));
-//        resultant = resultant.multiply(translationalVectorScalar);
-        double targetSpeed = (totalDistance - arcLength.value(CTEt) < 2) ? 0.2 : 0.9;
-        double power = velocityPid.getOutput(Robot.getRobotVelocity().vec().norm(), targetSpeed);
-        resultant = resultant.multiply(power / resultant.magnitude());
+        resultant = resultant.multiply(translationalVectorScalar);
+//        double targetSpeed = (totalDistance - arcLength.value(CTEt) < 2) ? 0.2 : 0.9;
+//        double power = velocityPid.getOutput(Robot.getRobotVelocity().vec().norm(), targetSpeed);
+//        resultant = resultant.multiply(power / resultant.magnitude());
 
         double[] outputWheelVelocities = DriveKinematics.mecanumFieldVelocityToWheelVelocities(robotPose, new Pose2d(resultant.x, -resultant.y, turnOutput));
         Robot.drivetrain.setPowers(outputWheelVelocities);
