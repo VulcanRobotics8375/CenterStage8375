@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotcorelib.motion.followers;
 
 import static org.firstinspires.ftc.teamcode.robotcorelib.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.robotcorelib.drive.DriveConstants.MAX_VELOCITY;
+import static org.firstinspires.ftc.teamcode.robotcorelib.drive.DriveConstants.MAX_VEL;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -123,7 +123,7 @@ public class PurePursuit extends Follower {
         //Motion Profile Generation
         // convert continuous, time-variant motion profile to discrete, time-invariant motion profile
         //transfer function-- https://www.desmos.com/calculator/rlv4hdqutl
-        double targetVel = MAX_VELOCITY * followPoint.speed;
+        double targetVel = MAX_VEL * followPoint.speed;
         double accelDistance = (targetVel*targetVel) / (2.0 * MAX_ACCEL);
         double minSpeed = 0.2;
         double m = (1 - minSpeed) / accelDistance;
@@ -175,7 +175,7 @@ public class PurePursuit extends Follower {
                         break;
                     case PID:
                         //TODO add heading velocity PID to this
-                        double velocityNorm = velocityPid.run(poseVelocity.norm(), robotVelocity.vec().norm() / MAX_VELOCITY);
+                        double velocityNorm = velocityPid.run(poseVelocity.norm(), robotVelocity.vec().norm() / MAX_VEL);
                         Vector2d PidOutputVelocity = new Vector2d(Math.cos(absoluteAngleToPoint), Math.sin(absoluteAngleToPoint)).times(velocityNorm);
                         outputVelocity = new Pose2d(PidOutputVelocity, headingOutput);
                         break;

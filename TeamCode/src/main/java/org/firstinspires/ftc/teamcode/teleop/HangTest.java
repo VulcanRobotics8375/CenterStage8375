@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.robotcorelib.opmode.OpModePipeline;
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
 
-@Disabled
 @TeleOp(name = "hang")
 public class HangTest extends OpModePipeline {
     MainConfig subsystems = new MainConfig();

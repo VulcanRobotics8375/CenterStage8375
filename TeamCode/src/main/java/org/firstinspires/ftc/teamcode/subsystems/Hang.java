@@ -70,8 +70,8 @@ public class Hang extends SubsystemState {
     }
 
     public void test(double stick, double stick2, boolean b1, boolean b2){
-        hangPos = Range.clip(hangPos + stick*0.01, HANG_DOWN, HANG_UP);
-        triggerPos = Range.clip(triggerPos + stick2*0.01, TRIGGER_OPEN, TRIGGER_HOME);
+        hangPos = Range.clip(hangPos + stick*0.01, 0.0, 1.0);
+        triggerPos = Range.clip(triggerPos + stick2*0.01, 0.0, 1.0);
 
         if (b1) {hanger.setPower(1);}
         else if (b2) {hanger.setPower(-1);}

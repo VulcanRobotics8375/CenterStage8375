@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robotcorelib.util.ErrorHandler;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.Subsystem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Robot {
@@ -42,7 +43,7 @@ public class Robot {
         telemetry = opMode.telemetry;
         config = opMode.subsystems;
         config.init();
-        config.localizer = new StandardTrackingWheelLocalizer(opMode.hardwareMap);
+        config.localizer = new StandardTrackingWheelLocalizer(opMode.hardwareMap, new ArrayList<>(), new ArrayList<>());
         localizer = config.localizer;
 
         errorHandler = new ErrorHandler(telemetry);
@@ -81,7 +82,7 @@ public class Robot {
         telemetry = opMode.telemetry;
         config = opMode.subsystems;
         config.init();
-        config.localizer = new StandardTrackingWheelLocalizer(opMode.hardwareMap);
+        config.localizer = new StandardTrackingWheelLocalizer(opMode.hardwareMap, new ArrayList<>(), new ArrayList<>());
         localizer = config.localizer;
 
         errorHandler = new ErrorHandler(telemetry);

@@ -69,6 +69,8 @@ public class PixelOpMode extends LinearOpMode {
          */
         webcam.setPipeline(pipeline);
 
+        webcam.showFpsMeterOnViewport(false);
+
         /*
          * Open the connection to the camera device. New in v1.4.0 is the ability
          * to open the camera asynchronously, and this is now the recommended way

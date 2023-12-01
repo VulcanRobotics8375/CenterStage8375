@@ -3,15 +3,18 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils.joystickCurve;
 import static org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils.shouldHardwareUpdate;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotcorelib.drive.DriveMode;
 import org.firstinspires.ftc.teamcode.robotcorelib.drive.DrivetrainImpl;
 import org.firstinspires.ftc.teamcode.robotcorelib.drive.DrivetrainVelocityMode;
+import org.firstinspires.ftc.teamcode.robotcorelib.math.control.SimplePID;
+import org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils;
+import org.firstinspires.ftc.teamcode.robotcorelib.motion.kinematics.DriveKinematics;
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.JoystickCurve;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
@@ -29,7 +32,13 @@ public class Drivetrain extends SubsystemState implements DrivetrainImpl {
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
     
     private Switch transferSwitch = new Switch();
-    private ElapsedTime transferTimer = new ElapsedTime();
+    private Switch depoSwitch = new Switch();
+
+    private Switch headingStrafeLockSwitch = new Switch();
+    private boolean headingStrafeLock = false;
+    private SimplePID turnPID = new SimplePID(-1.2, -0.01, 0.0, -0.3, 0.3);
+    private Switch zeroHeadingSwitch = new Switch();
+    private double zeroHeading = 0.0;
 
     @Override
     public void init() {
@@ -119,6 +128,7 @@ public class Drivetrain extends SubsystemState implements DrivetrainImpl {
 
     @Override
     public void intake() {
+        depoSwitch.simpleSwitch(false);
         transferSwitch.simpleSwitch(false);
         mecanumDrive();
     }
@@ -126,12 +136,29 @@ public class Drivetrain extends SubsystemState implements DrivetrainImpl {
     @Override
     public void deposit() {
         transferSwitch.simpleSwitch(false);
-        mecanumDrive();
+        if (depoSwitch.simpleSwitch(true)) {
+            headingStrafeLock = false;
+        }
+        if (headingStrafeLockSwitch.simpleSwitch(gamepad1.b)) {
+            headingStrafeLock = !headingStrafeLock;
+        }
+        if (zeroHeadingSwitch.simpleSwitch(gamepad1.y)) {
+            zeroHeading = Robot.getRobotPose().getHeading();
+        }
+        if (headingStrafeLock) {
+            Pose2d robotPose = Robot.getRobotPose();
+            double error = MathUtils.calcAngularError(zeroHeading, robotPose.getHeading());
+            double output = turnPID.run(error);
+            setPowers(DriveKinematics.mecanumFieldVelocityToWheelVelocities(robotPose, new Pose2d(-gamepad1.left_stick_y, -gamepad2.right_stick_x, output)));
+        } else {
+            mecanumDrive();
+        }
     }
 
     @Override
     public void transfer() {
-        if(transferSwitch.simpleSwitch(true)) {
+        depoSwitch.simpleSwitch(false);
+        if (transferSwitch.simpleSwitch(true)) {
             gamepad1.rumble(500);
         }
         mecanumDrive();

@@ -12,12 +12,12 @@ import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
 public class DroneLauncher extends SubsystemState {
     public ServoImplEx lifter, trigger;
 
-    private final double LAUNCHER_UP = 0.798;
-    private final double LAUNCHER_DOWN = 0.153;
+    private final double LAUNCHER_UP = 0.49;
+    private final double LAUNCHER_DOWN = 0.074;
     private double launcherPos = LAUNCHER_DOWN;
     private Switch liftSwitch = new Switch();
 
-    private double TRIGGER_HELD = 1.0;
+    private double TRIGGER_HELD = 0.908;
     private double TRIGGER_RELEASED = 0.6;
     private double triggerPos = TRIGGER_HELD;
     private Switch triggerSwitch = new Switch();

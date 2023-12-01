@@ -18,14 +18,14 @@ public class Hopper extends SubsystemState {
     private boolean paddleButton = false;
     private Switch aSwitch, bSwitch = new Switch();
 
-    private double LEFT_ARM_UP = 0.856;
-    private double LEFT_ARM_DOWN = 0.635;
+    private double LEFT_ARM_UP = 0.7215;
+    private double LEFT_ARM_DOWN = 0.5068;
     private double LEFT_ANALOG_DOWN = 1.175;
     private double LEFT_ANALOG_UP = 0.637;
     private double leftArmPos = 0.5;
 
-    private double RIGHT_ARM_UP = 0.856;
-    private double RIGHT_ARM_DOWN = 0.635;
+    private double RIGHT_ARM_UP = 0.86;
+    private double RIGHT_ARM_DOWN = 0.647;
     private double RIGHT_ANALOG_DOWN = 2.15;
     private double RIGHT_ANALOG_UP = 2.71;
     private double rightArmPos = 0.5;
