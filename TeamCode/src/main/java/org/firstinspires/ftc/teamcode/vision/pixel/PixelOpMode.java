@@ -139,6 +139,8 @@ public class PixelOpMode extends LinearOpMode {
             telemetry.addData("Height", rows);
             telemetry.addData("Width", cols);
 
+            telemetry.addData("count", pipeline.getFinalcount());
+
 
             telemetry.update();
             sleep(100);
