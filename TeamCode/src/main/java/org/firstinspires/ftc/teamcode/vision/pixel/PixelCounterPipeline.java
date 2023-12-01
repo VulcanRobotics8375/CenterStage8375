@@ -8,6 +8,8 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.util.ArrayList;
+
 
 public class PixelCounterPipeline extends OpenCvPipeline {
 
@@ -17,9 +19,9 @@ public class PixelCounterPipeline extends OpenCvPipeline {
 
 
     public int xm = 0, ym = 0;
-
-    double hScale = 2.0 / 3.0;
-    double wScale = 2.0 / 3.0;
+//
+//    double hScale = 2.0 / 3.0;
+//    double wScale = 2.0 / 3.0;
 
 
 
@@ -33,14 +35,14 @@ public class PixelCounterPipeline extends OpenCvPipeline {
 ////        Imgproc.circle(input, rotrect.center, 1, color, 1);
 //
 //    }
-
-    public int xset = 0;
-    public int yset = 0;
-
-    public int growth = 1;
-
-    public int growthx = 0;
-    public int growthy = 0;
+//
+//    public int xset = 0;
+//    public int yset = 0;
+//
+//    public int growth = 1;
+//
+//    public int growthx = 0;
+//    public int growthy = 0;
 
     public int Rx = 422;
     public int Ry = 383;
@@ -58,6 +60,14 @@ public class PixelCounterPipeline extends OpenCvPipeline {
     public int Lc = 73;
     public int Ld = -76;
 
+    public int rConstant = 0, lConstant = 0, cConstant = 0;
+
+//    ArrayList<Integer> count = new ArrayList<>();
+    int finalcount = 0;
+
+    public int getFinalcount() {
+        return finalcount;
+    }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -98,17 +108,32 @@ public class PixelCounterPipeline extends OpenCvPipeline {
 //                input
 //        );
 
+
+
         para l = new para(Lx, Ly, La, Lc, Ld, input);
         para c = new para(Cx, Cy, Ca, Cc, Cd, input);
         para r = new para(Rx, Ry, Ra, Rc, Rd, input);
 
+        int cCount = c.fillCheck(100, 100, input) - cConstant;
+        int lCount = l.fillCheck(100,100,input) - lConstant;
+        int rCount = r.fillCheck(100,100,input) - rConstant;
 
 
-        Imgproc.line(input, new Point(0,0), new Point(xm,ym), new Scalar(255,255,255));
+//        Imgproc.line(input, new Point(0,0), new Point(xm,ym), new Scalar(255,255,255));
 
-        Imgproc.putText(input, "L:" + l.fillCheck(100, 100, input), new Point(0,50), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
-        Imgproc.putText(input, "C:" + c.fillCheck(100, 100, input), new Point(0,100), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
-        Imgproc.putText(input, "R:" + r.fillCheck(100, 100, input), new Point(0,150), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
+//        Imgproc.putText(input, "L:" + l.fillCheck(100, 100, input), new Point(0,50), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
+//        Imgproc.putText(input, "C:" + c.fillCheck(100, 100, input), new Point(0,100), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
+//        Imgproc.putText(input, "R:" + r.fillCheck(100, 100, input), new Point(0,150), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
+
+        if (lCount > cCount && lCount > rCount) { finalcount = 1; }
+        else if (cCount > lCount && cCount > rCount) { finalcount = 2; }
+        else if (rCount > cCount && rCount > lCount) { finalcount = 3; }
+        // we could add to a list and take an average cuz we baddies %100
+        else{finalcount = 0;}
+
+
+
+
 
 
 //        drawRotatedRectange(input, prop, new Scalar(0, 255, 255));

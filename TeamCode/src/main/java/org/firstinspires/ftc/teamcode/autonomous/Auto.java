@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.robot.MainConfig;
 import org.firstinspires.ftc.teamcode.robotcorelib.motion.followers.ParametricGuidingVectorField;
 import org.firstinspires.ftc.teamcode.robotcorelib.motion.path.Path;
@@ -10,11 +11,18 @@ import org.firstinspires.ftc.teamcode.robotcorelib.motion.path.PathBuilder;
 import org.firstinspires.ftc.teamcode.robotcorelib.opmode.AutoPipeline;
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
+import org.firstinspires.ftc.teamcode.vision.pixel.PixelCounterPipeline;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous(name="Auto")
 public class Auto extends AutoPipeline {
+    OpenCvCamera camera;
     @Override
     public void runOpMode() {
+        PixelCounterPipeline pixelCounterPipeline = new PixelCounterPipeline();
         ParametricGuidingVectorField follower = new ParametricGuidingVectorField(this);
         Path coolPath = new PathBuilder()
                 .speed(0.5)
@@ -27,6 +35,23 @@ public class Auto extends AutoPipeline {
                 .end(new Pose2d(60, 20, 0))
                 .build();
         MainConfig subsystems = new MainConfig();
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        camera.setPipeline(pixelCounterPipeline);
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                // Usually this is where you'll want to start streaming from the camera
+                camera.startStreaming(1280, 800, OpenCvCameraRotation.UPRIGHT);
+            }
+            @Override
+            public void onError(int errorCode) {
+                // This will be called if the camera could not be opened
+                Robot.addErrorMessage("camera no work");
+            }
+        });
 
 
         super.subsystems = subsystems;
