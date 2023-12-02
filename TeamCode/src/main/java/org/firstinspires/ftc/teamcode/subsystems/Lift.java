@@ -14,7 +14,7 @@ public class Lift extends SubsystemState {
     DcMotorEx lift;
     Encoder liftEncoder;
 
-    PID liftPID = new PID(0.025,0.0008,0.01,0.1);
+    public PID liftPID = new PID(0.025,0.0008,0.01,0.1);
     private boolean liftHolding = false;
     private double minPos = 0;
     private final int LIFT_MAX_POS = 2800;
@@ -162,6 +162,10 @@ public class Lift extends SubsystemState {
 
     public boolean intakeReady() {
         return getLiftPos() < 15;
+    }
+
+    public void runToFirstPixel() {
+        lift.setPower(liftPID.getOutput(getLiftPos(), firstPixelPos));
     }
 
     public void testPID(PID pid) {

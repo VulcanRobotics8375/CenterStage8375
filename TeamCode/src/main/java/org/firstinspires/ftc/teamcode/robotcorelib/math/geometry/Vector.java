@@ -58,5 +58,10 @@ public class Vector {
     public Vector projectOnto(Vector vec) {
         return vec.multiply(vec.dot(this) / Math.pow(vec.magnitude(), 2));
     }
+    
+    public Vector normalize() {
+        double magnitude = magnitude();
+        return new Vector(this.x / magnitude, this.y / magnitude);
+    }
 
 }

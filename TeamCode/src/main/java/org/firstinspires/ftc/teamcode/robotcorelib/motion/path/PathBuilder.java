@@ -59,17 +59,9 @@ public class PathBuilder {
     }
 
     public PathBuilder addGuidePoint(Pose2d point) {
-        if(maintainHeading) {
             PathPoint pathPoint = new PathPoint(point.getX(), point.getY(), point.getHeading(), speed, turnSpeed, lookahead);
             guidePoints.add(pathPoint);
             lastPoint = pathPoint;
-        }
-        else {
-            double theta = MathUtils.fullAngleWrap(Math.atan2(point.getY() - lastPoint.y, point.getX() - lastPoint.x));
-            PathPoint pathPoint = new PathPoint(point.getX(), point.getY(), theta, speed, turnSpeed, lookahead);
-            guidePoints.add(pathPoint);
-            lastPoint = pathPoint;
-        }
         return this;
     }
 
@@ -79,12 +71,7 @@ public class PathBuilder {
     }
 
     public PathBuilder end(Pose2d end) {
-        if(maintainHeading) {
-            endPoint = new PathPoint(end.getX(), end.getY(), end.getHeading(), speed, turnSpeed, lookahead);
-        } else {
-            double theta = MathUtils.fullAngleWrap(Math.atan2(end.getY() - lastPoint.y, end.getX() - lastPoint.x));
-            endPoint = new PathPoint(end.getX(), end.getY(), theta, speed, turnSpeed, lookahead);
-        }
+        endPoint = new PathPoint(end.getX(), end.getY(), end.getHeading(), speed, turnSpeed, lookahead);
         lastPoint = endPoint;
         return this;
     }
@@ -129,5 +116,5 @@ public class PathBuilder {
         return guidePoints;
     }
 
-
+    public boolean getMaintainHeading() { return maintainHeading; }
 }

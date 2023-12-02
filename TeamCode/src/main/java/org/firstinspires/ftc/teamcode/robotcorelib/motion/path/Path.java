@@ -11,6 +11,7 @@ public class Path {
     private final ArrayList<PathPoint> guidePoints;
     private final PathPoint end;
     private boolean precise = true;
+    private boolean maintainHeading = false;
 
     private final HashMap<PathPoint, Runnable> runnableTasks;
 
@@ -21,6 +22,7 @@ public class Path {
         end.setPathPoint(builder.getEndPoint());
         guidePoints = new ArrayList<>(builder.getGuidePoints());
         runnableTasks = new HashMap<>(builder.getTasks());
+        maintainHeading = builder.getMaintainHeading();
     }
 
 
@@ -79,5 +81,5 @@ public class Path {
         return precise;
     }
 
-
+    public boolean getMaintainHeading() { return maintainHeading; }
 }

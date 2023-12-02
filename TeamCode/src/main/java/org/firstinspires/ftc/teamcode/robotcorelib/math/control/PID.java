@@ -254,6 +254,10 @@ public class PID {
         this.setpoint = setpoint;
     }
 
+    public void setSampleTime(double sampleTime) {
+        this.sampleTime = sampleTime;
+    }
+
     /**
      * Calculate the output value for the current PID cycle.<br>
      * @param actual The monitored value, typically as a sensor input.

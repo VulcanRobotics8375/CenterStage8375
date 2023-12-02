@@ -30,12 +30,13 @@ public class SimplePID {
         integral += (error + lastError) / 2.0;
         double derivative = Kd * (error - lastError);
 
-        double limMinInt, limMaxInt;
-        limMaxInt = Math.min(proportional, limMax);
-        limMinInt = Math.max(proportional, limMin);
+//        vvv THIS CODE IS WRONG vvv
+//        double limMinInt, limMaxInt;
+//        limMaxInt = Math.min(proportional, limMax);
+//        limMinInt = Math.max(proportional, limMin);
 
         proportional = Range.clip(proportional, limMin, limMax);
-        integral = Range.clip(integral, limMinInt, limMaxInt);
+//        integral = Range.clip(integral, limMinInt, limMaxInt);
 
         lastError = error;
         return proportional + Ki * integral + derivative;

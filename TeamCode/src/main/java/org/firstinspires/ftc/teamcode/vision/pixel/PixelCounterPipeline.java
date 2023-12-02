@@ -15,7 +15,7 @@ public class PixelCounterPipeline extends OpenCvPipeline {
 
     Scalar highPIX = new Scalar(255, 50, 255), lowPIX = new Scalar(0, 0, 0);
 
-    private Mat lmat = new Mat();
+    private Mat mat = new Mat();
 
 
     public int xm = 0, ym = 0;
@@ -71,7 +71,7 @@ public class PixelCounterPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        Imgproc.resize(input, input, new Size(640, 480));
+        Imgproc.resize(input, mat, new Size(640, 480));
 
 //        int sx = 250;
 //        int sy = 250;
@@ -110,20 +110,20 @@ public class PixelCounterPipeline extends OpenCvPipeline {
 
 
 
-        para l = new para(Lx, Ly, La, Lc, Ld, input);
-        para c = new para(Cx, Cy, Ca, Cc, Cd, input);
-        para r = new para(Rx, Ry, Ra, Rc, Rd, input);
+        para l = new para(Lx, Ly, La, Lc, Ld, mat);
+        para c = new para(Cx, Cy, Ca, Cc, Cd, mat);
+        para r = new para(Rx, Ry, Ra, Rc, Rd, mat);
 
-        int cCount = c.fillCheck(100, 100, input) - cConstant;
-        int lCount = l.fillCheck(100,100,input) - lConstant;
-        int rCount = r.fillCheck(100,100,input) - rConstant;
+        int cCount = c.fillCheck(100, 100, mat) - cConstant;
+        int lCount = l.fillCheck(100,100,mat) - lConstant;
+        int rCount = r.fillCheck(100,100,mat) - rConstant;
 
 
 //        Imgproc.line(input, new Point(0,0), new Point(xm,ym), new Scalar(255,255,255));
 
-//        Imgproc.putText(input, "L:" + l.fillCheck(100, 100, input), new Point(0,50), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
-//        Imgproc.putText(input, "C:" + c.fillCheck(100, 100, input), new Point(0,100), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
-//        Imgproc.putText(input, "R:" + r.fillCheck(100, 100, input), new Point(0,150), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
+        Imgproc.putText(input, "L:" + l.fillCheck(100, 100, input), new Point(0,50), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
+        Imgproc.putText(input, "C:" + c.fillCheck(100, 100, input), new Point(0,100), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
+        Imgproc.putText(input, "R:" + r.fillCheck(100, 100, input), new Point(0,150), Imgproc.FONT_HERSHEY_PLAIN, 3.0, new Scalar(0,0,0));
 
         if (lCount > cCount && lCount > rCount) { finalcount = 1; }
         else if (cCount > lCount && cCount > rCount) { finalcount = 2; }

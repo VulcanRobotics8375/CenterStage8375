@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision.pixel;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -11,28 +8,14 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.robot.MainConfig;
 import org.firstinspires.ftc.teamcode.robotcorelib.opmode.AutoPipeline;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
-import org.firstinspires.ftc.teamcode.vision.pixel.PixelCounterPipeline;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Config
-@TeleOp(name= "PixelOpMode")
-public class PixelOpMode extends AutoPipeline {
+@TeleOp(name= "RectOpMode")
+public class RectOpMode extends AutoPipeline {
     private ElapsedTime runtime = new ElapsedTime();
 
     private final int rows = 720;
@@ -58,7 +41,7 @@ public class PixelOpMode extends AutoPipeline {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        PixelCounterPipeline pipeline = new PixelCounterPipeline();
+        RectPipeline pipeline = new RectPipeline();
         MainConfig subsystems = new MainConfig();
 
         super.subsystems = subsystems;
@@ -72,35 +55,21 @@ public class PixelOpMode extends AutoPipeline {
         webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened() {
-                webcam.startStreaming(cols, rows, OpenCvCameraRotation.UPSIDE_DOWN);
-            }
+            public void onOpened() { webcam.startStreaming(cols, rows, OpenCvCameraRotation.UPSIDE_DOWN); }
 
             @Override
-            public void onError(int errorCode) {
-            }
+            public void onError(int errorCode) {}
         });
+
+        pipeline.detectRed(false);
 
         while (!isStarted() && !isStopRequested())
         {
-            pipeline.Lx = Lx;
-            pipeline.Ly = Ly;
-            pipeline.La = La;
-            pipeline.Lc = Lc;
-            pipeline.Ld = Ld;
-            pipeline.Cx = Cx;
-            pipeline.Cy = Cy;
-            pipeline.Ca = Ca;
-            pipeline.Cc = Cc;
-            pipeline.Cd = Cd;
-            pipeline.Rx = Rx;
-            pipeline.Ry = Ry;
-            pipeline.Ra = Ra;
-            pipeline.Rc = Rc;
-            pipeline.Rd = Rd;
-            
             subsystems.droneLauncher.launcherUp();
-            telemetry.addData("count", pipeline.getFinalcount());
+            telemetry.addData("Left count", pipeline.lCount);
+            telemetry.addData("Right count", pipeline.rCount);
+            telemetry.addData("Center count", pipeline.cCount);
+            telemetry.addData("spike mark", pipeline.getPropIdx());
 
             telemetry.update();
             sleep(20);

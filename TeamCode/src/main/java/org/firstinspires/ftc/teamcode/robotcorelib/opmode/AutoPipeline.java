@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotcorelib.opmode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
@@ -18,6 +20,9 @@ public class AutoPipeline extends LinearOpMode {
     }
 
     public void robotInit() {
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
         if(subsystems != null && runMode != null) {
             Robot.init(this);
             if (runMode == RobotRunMode.TELEOP) {

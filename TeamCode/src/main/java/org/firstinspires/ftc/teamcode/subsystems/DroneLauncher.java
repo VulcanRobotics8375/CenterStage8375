@@ -75,7 +75,10 @@ public class DroneLauncher extends SubsystemState {
         run();
     }
 
-
-
-
+    public void launcherUp() {
+        lifter.setPosition(LAUNCHER_UP);
+    }
+    public void launcherDown() {
+        lifter.setPosition(LAUNCHER_DOWN);
+    }
 }

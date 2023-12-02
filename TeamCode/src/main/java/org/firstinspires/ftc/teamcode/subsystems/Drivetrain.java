@@ -36,7 +36,7 @@ public class Drivetrain extends SubsystemState implements DrivetrainImpl {
 
     private Switch headingStrafeLockSwitch = new Switch();
     private boolean headingStrafeLock = false;
-    private SimplePID turnPID = new SimplePID(-1.2, -0.01, 0.0, -0.3, 0.3);
+    private SimplePID turnPID = new SimplePID(-2, -0.01, 0.0, -0.7, 0.7);
     private Switch zeroHeadingSwitch = new Switch();
     private double zeroHeading = 0.0;
 
@@ -128,7 +128,7 @@ public class Drivetrain extends SubsystemState implements DrivetrainImpl {
 
     @Override
     public void intake() {
-        depoSwitch.simpleSwitch(false);
+//        depoSwitch.simpleSwitch(false);
         transferSwitch.simpleSwitch(false);
         mecanumDrive();
     }
@@ -136,23 +136,24 @@ public class Drivetrain extends SubsystemState implements DrivetrainImpl {
     @Override
     public void deposit() {
         transferSwitch.simpleSwitch(false);
-        if (depoSwitch.simpleSwitch(true)) {
-            headingStrafeLock = false;
-        }
-        if (headingStrafeLockSwitch.simpleSwitch(gamepad1.b)) {
-            headingStrafeLock = !headingStrafeLock;
-        }
-        if (zeroHeadingSwitch.simpleSwitch(gamepad1.y)) {
-            zeroHeading = Robot.getRobotPose().getHeading();
-        }
-        if (headingStrafeLock) {
-            Pose2d robotPose = Robot.getRobotPose();
-            double error = MathUtils.calcAngularError(zeroHeading, robotPose.getHeading());
-            double output = turnPID.run(error);
-            setPowers(DriveKinematics.mecanumFieldVelocityToWheelVelocities(robotPose, new Pose2d(-gamepad1.left_stick_y, -gamepad2.right_stick_x, output)));
-        } else {
-            mecanumDrive();
-        }
+//        if (depoSwitch.simpleSwitch(true)) {
+//            headingStrafeLock = false;
+//        }
+//        if (headingStrafeLockSwitch.simpleSwitch(gamepad1.x)) {
+//            headingStrafeLock = !headingStrafeLock;
+//        }
+//        if (zeroHeadingSwitch.simpleSwitch(gamepad1.b)) {
+//            zeroHeading = Robot.getRobotPose().getHeading();
+//        }
+//        if (headingStrafeLock) {
+//            Pose2d robotPose = Robot.getRobotPose();
+//            double error = MathUtils.calcAngularError(zeroHeading, robotPose.getHeading());
+//            double output = turnPID.run(error);
+//            setPowers(DriveKinematics.mecanumFieldVelocityToWheelVelocities(robotPose, new Pose2d(-gamepad1.left_stick_y, -gamepad1.right_stick_x, output)));
+//        } else {
+//            mecanumDrive();
+//        }
+        mecanumDrive();
     }
 
     @Override

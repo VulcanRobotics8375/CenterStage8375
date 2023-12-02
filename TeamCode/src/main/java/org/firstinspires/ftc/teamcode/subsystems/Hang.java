@@ -12,15 +12,17 @@ public class Hang extends SubsystemState {
     public ServoImplEx hangRaise, trigger;
     public DcMotor hanger;
 
-    private final double HANG_UP = 0.119;
-    private final double HANG_DOWN = 0.471;
-    private double hangPos = 0.5;
+    private final double HANG_UP = 0.146;
+    private final double HANG_DOWN = 0.45;
+    private double hangPos = HANG_DOWN;
     private Switch hangSwitch = new Switch();
 
-    private final double TRIGGER_HOME = 1.0;
-    private final double TRIGGER_OPEN = 0.275;
-    private double triggerPos = 0.5;
+    private final double TRIGGER_HOME = 0.59582;
+    private final double TRIGGER_OPEN = 0.20612;
+    private double triggerPos = TRIGGER_HOME;
     private Switch triggerSwitch = new Switch();
+
+    public boolean HANGING = false;
 
 
     public void init() {
@@ -44,19 +46,16 @@ public class Hang extends SubsystemState {
         if(hangSwitch.simpleSwitch(gamepad1.right_bumper)) {
             hangPos = hangPos == HANG_DOWN ? HANG_UP : HANG_DOWN;
         }
-        if (hangPos == HANG_UP) {
-            if (triggerSwitch.simpleSwitch(gamepad1.left_bumper)) {
-                triggerPos = triggerPos == TRIGGER_HOME ? TRIGGER_OPEN : TRIGGER_HOME;
-            }
-        } else {
-            triggerPos = TRIGGER_HOME;
+        if (triggerSwitch.simpleSwitch(gamepad1.left_bumper) && hangPos == HANG_UP) {
+            triggerPos = triggerPos == TRIGGER_HOME ? TRIGGER_OPEN : TRIGGER_HOME;
         }
         hangRaise.setPosition(hangPos);
         trigger.setPosition(triggerPos);
 
-        if (gamepad1.a) {hanger.setPower(1);}
-        else if (gamepad1.b) {hanger.setPower(-1);}
-        else {hanger.setPower(0);}
+        if (HANGING && !gamepad1.y) { hanger.setPower(0.3); }
+
+        if (gamepad1.y && triggerPos == TRIGGER_OPEN) { hanger.setPower(1); HANGING = true;}
+        else { hanger.setPower(0); }
     }
 
     public void intake(){

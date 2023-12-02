@@ -121,6 +121,14 @@ public class Hopper extends SubsystemState {
         rightArm.setPosition(RIGHT_ARM_UP);
     }
 
+    public void doorClose() {
+        door.setPosition(DOOR_CLOSED);
+    }
+
+    public void doorOpen() {
+        door.setPosition(DOOR_OPENED);
+    }
+
     public void testAnalog() {
         if(hopperSwitch.simpleSwitch(gamepad2.y)) {
             hopperDown = !hopperDown;

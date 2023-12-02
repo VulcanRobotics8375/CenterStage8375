@@ -28,9 +28,9 @@ public class Intake extends SubsystemState {
     public ServoImplEx leftServo,rightServo;
     public double servoPosLeft = 0.5, servoPosRight = 0.5;
     public boolean armDown = false;
-    public final double leftArmUp = 0.81;
+    public final double leftArmUp = 0.731;
     public final double leftArmDown = 0.13;
-    public final double rightArmUp = 0.1856;
+    public final double rightArmUp = 0.241;
     public final double rightArmDown = 0.8579;
 
     double upperrange = 0.0;
@@ -39,6 +39,7 @@ public class Intake extends SubsystemState {
     private boolean liftReady = true;
 
     private Switch intakeSwitch = new Switch();
+    private Switch transferSwitch = new Switch();
 
     DigitalChannel breakBeam;
     private int breakCount = 0;
@@ -61,9 +62,11 @@ public class Intake extends SubsystemState {
     }
 
     public void intake() {
+        transferSwitch.simpleSwitch(false);
         if (intakeSwitch.simpleSwitch(true)) {
             breakCount = 0;
             power = 0.0;
+            armDown = false;
         }
 
         if (breakSwitch.simpleSwitch(!breakBeam.getState())) {
@@ -81,7 +84,11 @@ public class Intake extends SubsystemState {
             }
         }
 
-        armDown();
+        if (armDown) {
+            armDown();
+        } else {
+            armUp();
+        }
 
         intake.setPower(power);
         counterRoller.setPower(power);
@@ -90,21 +97,29 @@ public class Intake extends SubsystemState {
     }
 
     public void deposit() {
+        transferSwitch.simpleSwitch(false);
         intakeSwitch.simpleSwitch(false);
         intake.setPower(0);
         counterRoller.setPower(0);
-        armDown();
+        armUp();
     }
 
     public void transfer() {
         intakeSwitch.simpleSwitch(false);
-        intake.setPower(-1.0);
-        counterRoller.setPower(-1.0);
-        armDown();
+        if (transferSwitch.simpleSwitch(true)) {
+            power = -1.0;
+        }
+
+        if(aSwitch.simpleSwitch(gamepad2.a)) {
+            power = -1.0 - power;
+        }
+        intake.setPower(power);
+        counterRoller.setPower(power);
+        armUp();
     }
 
     public boolean intakingComplete() {
-        return breakCount >= 2 && breakBeam.getState() && breakBeamTimeOffset.milliseconds() >= 300;
+        return false;
     }
 
     public void resetBreakBeam() {
@@ -137,6 +152,18 @@ public class Intake extends SubsystemState {
         rightServo.setPosition(servoPosRight);
 //        servoPosLeft = Range.clip(servoPosLeft - input, 0.0, 1.0);
 //        leftServo.setPosition(servoPosLeft);
+    }
+
+    public void testRight(double input) {
+        servoPosRight = Range.clip(servoPosRight + input*0.01, 0.0, 1.0);
+        rightServo.setPosition(servoPosRight);
+        telemetry.addData("right intake servo pos: ", servoPosRight);
+    }
+
+    public void testLeft(double input) {
+        servoPosLeft = Range.clip(servoPosLeft + input*0.01, 0.0, 1.0);
+        leftServo.setPosition(servoPosLeft);
+        telemetry.addData("left intake servo pos: ", servoPosLeft);
     }
 
     public void test(boolean intakeButton, boolean counterRollButton, boolean outtakeButton, double stick) {
