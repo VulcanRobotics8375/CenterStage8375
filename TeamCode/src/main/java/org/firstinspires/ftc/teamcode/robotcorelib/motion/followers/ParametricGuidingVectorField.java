@@ -51,8 +51,8 @@ public class ParametricGuidingVectorField extends Follower {
     LinearInterpolator linearInterpolator = new LinearInterpolator();
 
     BrentOptimizer optim = new BrentOptimizer(1e-10, 1e-14);
-    PolynomialSplineFunction xSpline;
-    PolynomialSplineFunction ySpline;
+    public PolynomialSplineFunction xSpline;
+    public PolynomialSplineFunction ySpline;
     UnivariateFunction headingFunction;
     ParametricDistance distance;
     ParametricArcLength arcLength;

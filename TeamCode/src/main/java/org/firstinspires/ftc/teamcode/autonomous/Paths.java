@@ -81,7 +81,7 @@ public class Paths {
                     .addGuidePoint(new Pose2d(7.62, -12.558, 0.803))
                     .addGuidePoint(new Pose2d(8.2, -24.9, Math.PI/2))
                     .addGuidePoint(new Pose2d(backDropPos, -31, Math.PI/2))
-                    .end(new Pose2d(backDropPos, -39.461, Math.PI/2))
+                    .end(new Pose2d(backDropPos, -40.5, Math.PI/2))
                     .build();
         } else if (!red && backDrop) {
             backDropPos = 27.008 + 6 * (propIdx - 1);
@@ -138,7 +138,7 @@ public class Paths {
         }
         return new PathBuilder()
                 .start(new Pose2d())
-                .addGuidePoint(new Pose2d(4.135, 0, 0))
+                .addGuidePoint(new Pose2d(5, 0, 0))
                 .addGuidePoint(new Pose2d(4.135, yPark, 0))
                 .end(new Pose2d(-9.06, yPark, 0))
                 .build();

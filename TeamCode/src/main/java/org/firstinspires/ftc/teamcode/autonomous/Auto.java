@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -127,32 +128,35 @@ public class Auto extends AutoPipeline {
             if(follower.distanceFromEnd < 40) {
                 subsystems.lift.runToFirstPixel();
                 subsystems.hopper.hopperUp();
-                if (Robot.getRobotVelocity().vec().norm() < 1) {
+                if (Robot.getRobotPose().vec().distTo(new Vector2d(follower.xSpline.value(1.0), follower.ySpline.value(1.0))) < 1.0 && Robot.getRobotVelocity().vec().norm() < 0.2) {
                     hardStop = true;
                 }
             }
         }
 
         subsystems.hopper.doorOpen();
-
         timer.reset();
         runTask(new AutoTask() {
             @Override
             public boolean conditional() {
-                return timer.milliseconds() <= 1500;
+                return timer.milliseconds() <= 3000;
             }
 
             @Override
             public void run() {
-                subsystems.lift.runToFirstPixel();
             }
         });
 
-        subsystems.hopper.doorClose();
-        subsystems.hopper.hopperDown();
-        subsystems.lift.home();
-
-        follower.followPath(paths.getParkPath(red, parkLeft, propIdx));
+        follower.followPathAsync(paths.getParkPath(red, parkLeft, propIdx));
+        timer.reset();
+        while (!follower.atEnd && !isStopRequested()) {
+            follower.update();
+            if(timer.milliseconds() > 1000) {
+                subsystems.hopper.hopperDown();
+                subsystems.lift.home();
+                subsystems.hopper.doorClose();
+            }
+        }
 
         Robot.stop();
     }

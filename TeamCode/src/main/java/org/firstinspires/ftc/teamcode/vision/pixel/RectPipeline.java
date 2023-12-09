@@ -64,9 +64,15 @@ public class RectPipeline extends OpenCvPipeline {
         if (red) {
             highHSV = new Scalar(180, 255, 255);
             lowHSV = new Scalar(150, 100, 100);
+            rConstant = 23;
+            lConstant = 16;
+            cConstant = 1;
         } else {
-            highHSV = new Scalar(130,255,255);
-            lowHSV = new Scalar(110, 50, 50);
+            highHSV = new Scalar(140,255,255);
+            lowHSV = new Scalar(100, 50, 50);
+            rConstant = 50;
+            lConstant = 39;
+            cConstant = 33;
         }
     }
 

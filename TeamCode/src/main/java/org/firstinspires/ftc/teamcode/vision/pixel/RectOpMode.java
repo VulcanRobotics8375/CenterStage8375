@@ -61,7 +61,7 @@ public class RectOpMode extends AutoPipeline {
             public void onError(int errorCode) {}
         });
 
-        pipeline.detectRed(false);
+        pipeline.detectRed(true);
 
         while (!isStarted() && !isStopRequested())
         {
