@@ -244,4 +244,18 @@ public class ParametricGuidingVectorField extends Follower {
         opMode.telemetry.update();
     }
 
+    public double getParametricCurvature() {
+        PolynomialSplineFunction xD = xSpline.polynomialSplineDerivative();
+        PolynomialSplineFunction yD = ySpline.polynomialSplineDerivative();
+
+        double dx = xD.value(CTEt);
+        double dy = yD.value(CTEt);
+
+        double dx2 = xD.derivative().value(CTEt);
+        double dy2 = yD.derivative().value(CTEt);
+
+        double r = (FastMath.sqrt(FastMath.pow(FastMath.pow(dx, 2) + FastMath.pow(dy, 2), 3))) / ((dx * dy2) - (dy * dx2));
+        return 1/r;
+    }
+
 }
