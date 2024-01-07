@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision.apriltag;
+package org.firstinspires.ftc.teamcode.vision.apriltag.testing;
 
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
@@ -32,28 +32,24 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
     Scalar green = new Scalar(0, 255, 0, 255);
     Scalar white = new Scalar(255, 255, 255, 255);
 
-    double fx;
-    double fy;
-    double cx;
-    double cy;
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+
+    public int move = 0;
 
     // UNITS ARE METERS
-    double tagsize;
-    double tagsizeX;
-    double tagsizeY;
+    double tagsize = 0.166;
+    double tagsizeX = 0.166;
+    double tagsizeY = 0.166;
 
     private float decimation;
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-    public AprilTagDetectionPipeline(double tagsize, double fx, double fy, double cx, double cy) {
-        this.tagsize = tagsize;
-        this.tagsizeX = tagsize;
-        this.tagsizeY = tagsize;
-        this.fx = fx;
-        this.fy = fy;
-        this.cx = cx;
-        this.cy = cy;
+    public AprilTagDetectionPipeline() {
+
 
         constructMatrix();
 
@@ -71,6 +67,40 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
         } else {
             System.out.println("AprilTagDetectionPipeline.finalize(): nativeApriltagPtr was NULL");
         }
+    }
+
+    private ArrayList<Point3> rotate3dZ(double t, ArrayList<Point3> plist) {
+        double cos = Math.cos(t);
+        double sin = Math.sin(t);
+        ArrayList<Point3> reP = new ArrayList<>();
+        for (Point3 p : plist) {
+            double x = p.x * cos - p.y * sin;
+            double y = p.y * cos + p.x * sin;
+            reP.add(new Point3(x,y,p.z));
+        }
+        return reP;
+    }
+    private ArrayList<Point3> rotate3dX(double t, Point3 axis, ArrayList<Point3> plist) {
+        double cos = Math.cos(t);
+        double sin = Math.sin(t);
+        ArrayList<Point3> reP = new ArrayList<>();
+        for (Point3 p : plist) {
+            double y = p.y * cos - p.z * sin;
+            double z = p.z * cos + p.y * sin;
+            reP.add(new Point3(p.x,y,z));
+        }
+        return reP;
+    }
+    private ArrayList<Point3> rotate3dY(double t, ArrayList<Point3> plist) {
+        double cos = Math.cos(t);
+        double sin = Math.sin(t);
+        ArrayList<Point3> reP = new ArrayList<>();
+        for (Point3 p : plist) {
+            double x = p.x * cos + p.z * sin;
+            double z = p.z * cos - p.x * sin;
+            reP.add(new Point3(x,p.y,z));
+        }
+        return reP;
     }
 
     @Override
@@ -93,14 +123,83 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
         }
 
         // For fun, use OpenCV to draw 6DOF markers on the image.
-        for (AprilTagDetection detection : detections) {
-            Pose pose = aprilTagPoseToOpenCvPose(detection.pose);
-            //Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
-            drawAxisMarker(input, tagsizeY / 2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
-            draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
+        double S1 = 0;
+        double S2 = 0;
+        double centerX = 0;
+        double B2 = 0;
+        Point3 pos = new Point3(0,0,0);
+        for (AprilTagDetection det : detections) {
+            S1 += (det.corners[0].y - det.corners[3].y) / (det.corners[0].x - det.corners[3].x);
+            S2 += (det.corners[3].y - det.corners[2].y) / (det.corners[3].x - det.corners[2].x);
+            pos.x += det.pose.x;
+            pos.y += det.pose.y;
+            pos.z += det.pose.z;
+
+            centerX += det.center.x;
+
+            B2 -= ((S2 * det.corners[3].x) - det.corners[3].y);
         }
 
+        int avgSize = detections.size();
+
+        double finalS = S1/avgSize;
+        double finalS2 = S2/avgSize;
+
+
+        double finalCenterX = centerX/avgSize;
+
+        pos.x = pos.x/avgSize;
+        pos.y = pos.y/avgSize;
+        pos.z = pos.z/avgSize;
+
+        double finalB2  = B2/avgSize;
+
+
+
+
+        double scale = 1 / dist3d(pos);
+        double xset = 10000 * scale;
+        double xScale = 2000 * scale;
+        double yScale = 5 * scale;
+
+        Point kys = new Point(finalCenterX - xScale,  (S2 * (finalCenterX - xScale))+B2);
+        Point kys2 = new Point(finalCenterX + xScale, (S2 * (finalCenterX + xScale))+B2);
+        double B1 = -((S1*kys.x) - kys.y);
+        double B12 = -((S1*kys2.x) - kys2.y);
+
+        ArrayList<Point> dtList = new ArrayList<Point>() {
+            {
+                add(new Point(finalCenterX - xScale,  (finalS2 * (finalCenterX - xScale))+ finalB2));
+                add(new Point(finalCenterX + xScale, (finalS2 * (finalCenterX + xScale))+ finalB2));
+                add(new Point((finalCenterX + yScale)-xset, (finalS * ((finalCenterX + yScale)-xset))+B12));
+                add(new Point((finalCenterX - yScale)-xset, (finalS * ((finalCenterX - yScale)-xset))+B1));
+
+            }
+
+        };
+
+        for (int e=0; e < 4; e++) {
+            if (e>0) {
+                Imgproc.line(input, dtList.get(e), dtList.get(e - 1), new Scalar(255,0,0),25);
+            }
+            else{
+                Imgproc.line(input, dtList.get(e), dtList.get(3),new Scalar(255,0,0),25);
+            }
+        }
+
+//            dtList = rotate3dX(aX, dtList);
+//            dtList = rotate3dY(aY, dtList);
+//            dtList = rotate3dZ(aZ, dtList);
+//
+//            for (Point3 pont : dtList) {
+//                Imgproc.line(input, new Point(pont.x, pont.y), new Point(pont.x, pont.y), new Scalar(255, 255, 255), 100);
+//            }
+
         return input;
+    }
+
+    public double dist3d(Point3 pos1) {
+        return Math.sqrt((Math.pow(pos1.x, 2) + Math.pow(pos1.y, 2) + Math.pow(pos1.z, 2)));
     }
 
     public void setDecimation(float decimation) {
