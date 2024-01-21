@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.vision.apriltag.testing;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -37,7 +38,8 @@ public class Projection extends OpenCvPipeline {
                 new Vector3D(-10,-10,-10),
                 new Vector3D(10,-10,-10),
                 new Vector3D(10,10,-10)));
-
+        Double[] list = {0.0,30.0,0.0};
+        ps = rotate(list, ps);
         Imgproc.line(input,new Point(orig.getX(), orig.getZ()),new Point(orig.getX(), orig.getZ()),new Scalar(0,0,0), 50);
 
         ArrayList<Point> normalP = projection2(orig, ps);
@@ -82,5 +84,51 @@ public class Projection extends OpenCvPipeline {
         }
 
         return points;
+    }
+
+    public ArrayList<Vector3D> rotate(Double[] t, ArrayList<Vector3D> points){
+        RealMatrix[] RMs = buildMatrix(t);
+        ArrayList<Vector3D> finalPoints = new ArrayList<>();
+        for (Vector3D point3 : points) {
+            RealMatrix matrix3 = MatrixUtils.createRealMatrix(new double[][]{
+                    {point3.getX()},
+                    {point3.getY()},
+                    {point3.getZ()}
+            });
+            for (RealMatrix Rm : RMs) {
+                matrix3 = Rm.multiply(matrix3);
+            }
+            finalPoints.add(new Vector3D(
+                    matrix3.getEntry(0,0),
+                    matrix3.getEntry(1,0),
+                    matrix3.getEntry(2,0)
+            ));
+        }
+        return finalPoints;
+    }
+
+    public RealMatrix[] buildMatrix(Double[] t) {
+        double cosx = Math.cos(t[0]); double sinx = Math.sin(t[0]);
+        double cosy = Math.cos(t[1]); double siny = Math.sin(t[1]);
+        double cosz = Math.cos(t[2]); double sinz = Math.sin(t[2]);
+        RealMatrix[] matrixList = new RealMatrix[3];
+        matrixList[0] = MatrixUtils.createRealMatrix(new double[][]{
+                {1, 0, 0},
+                {0, cosx, -sinx},
+                {0, sinx, cosx}
+        });
+
+        matrixList[1] = MatrixUtils.createRealMatrix(new double[][]{
+                {cosy, 0, siny},
+                {0, 1, 0},
+                {-siny, 0, cosy}
+        });
+
+        matrixList[2] = MatrixUtils.createRealMatrix(new double[][]{
+                {cosz, -sinz, 0},
+                {sinz, cosz, 0},
+                {0, 0, 1}
+        });
+        return matrixList;
     }
 }
