@@ -3,60 +3,134 @@ package org.firstinspires.ftc.teamcode.vision.apriltag.testing;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.firstinspires.ftc.teamcode.AprilTagDetectionPipeline;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.apriltag.AprilTagDetectorJNI;
+import org.openftc.apriltag.AprilTagPose;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Projection extends OpenCvPipeline {
+public class Projection extends AprilTagDetectionPipeline {
 
     public double tilt = 0;
+
+    final int SCREENX = 640; final int SCREENY = 800;
     public double pan= 0;
 
     public double L = 150;
 
     public double origx, origy,origz=0;
 
+    private long nativeApriltagPtr;
 
+    public Projection() {
+        super();
+        fx = 578.272;
+        fy = 578.272;
+        cx = 402.145;
+        cy = 221.506;
+
+        // UNITS ARE METERS
+        tagsize = 0.166;
+        nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
+
+    }
+
+    private Mat grey = new Mat();
+    private ArrayList<AprilTagDetection> detections = new ArrayList<>();
+
+    private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
+    private final Object detectionsUpdateSync = new Object();
+
+    double fx;
+    double fy;
+    double cx;
+    double cy;
+
+    // UNITS ARE METERS
+    double tagsize;
+
+
+    public void AprilTag(Mat input) {
+        Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
+        detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeApriltagPtr, grey, tagsize, fx, fy, cx, cy);
+        synchronized (detectionsUpdateSync)
+        {
+            detectionsUpdate = detections;
+        }
+    }
     @Override
     public Mat processFrame(Mat input) {
+        AprilTag(input);
+
         Vector3D orig = new Vector3D(origx,origy,origz);
+        for (AprilTagDetection det : detections) {
+            AprilTagPose pose = det.pose;
+            double x = pose.x;
+            double y = pose.y;
+            double z = pose.z;
+            double Scale = 10;
+            ArrayList<Vector3D> p = new ArrayList<>(Arrays.asList(new Vector3D(x,y,z),
+                    new Vector3D(x,y-Scale,z),
+                    new Vector3D(x-Scale,y-Scale,z),
+                    new Vector3D(x-Scale,y,z),
+                    new Vector3D(x,y,z),
+                    new Vector3D(x,y,z-Scale),
+                    new Vector3D(x-Scale,y,z-Scale),
+                    new Vector3D(x-Scale,y-Scale,z-Scale),
+                    new Vector3D(x,y-Scale,z-Scale),
+                    new Vector3D(x,y,z-Scale)));
+            pan = det.pose.R.get(0,0);
+            ArrayList<Point> normal = projection2(orig, p);
+//            Double[] l = {(double) pose.R.get(0, 0), (double) pose.R.get(0, 1), (double) pose.R.get(0, 2)};
+            Double[] l = {0.0,30.0,0.0};
+            p = rotate(l, p);
+            for (int i=0; i < normal.size(); i++) {
 
-
-        ArrayList<Vector3D> ps = new ArrayList<>(Arrays.asList(
-                new Vector3D(10,10,10),
-                new Vector3D(10,-10,10),
-                new Vector3D(-10,-10,10),
-                new Vector3D(-10,10,10),
-                new Vector3D(10,10,10),
-                new Vector3D(10,10,-10),
-                new Vector3D(-10,10,-10),
-                new Vector3D(-10,-10,-10),
-                new Vector3D(10,-10,-10),
-                new Vector3D(10,10,-10)));
-        Double[] list = {0.0,30.0,0.0};
-        ps = rotate(list, ps);
-        Imgproc.line(input,new Point(orig.getX(), orig.getZ()),new Point(orig.getX(), orig.getZ()),new Scalar(0,0,0), 50);
-
-        ArrayList<Point> normalP = projection2(orig, ps);
-
-        for (int i=0; i < normalP.size(); i++){
-
-            Point niP = new Point(normalP.get(i).x + 900, -normalP.get(i).y + 1200);
-            int e = (i + 1) % normalP.size();
-            Point neP = new Point(normalP.get(e).x + 900, -normalP.get(e).y + 1200);
-            Imgproc.line(input, niP, neP, new Scalar(100, 100, 255), 15);
-
-//            Imgproc.line(input, niP, new Point(900,1200), new Scalar(100, 100, 255), 15);
-
-
-            Imgproc.putText(input, Integer.toString(i), niP, Imgproc.FONT_HERSHEY_DUPLEX, 5, new Scalar(255,0,0));
-
+                Point niP = new Point(normal.get(i).x + SCREENX/2, -normal.get(i).y + SCREENY/2);
+                int e = (i + 1) % normal.size();
+                Point neP = new Point(normal.get(e).x + SCREENX/2, -normal.get(e).y + SCREENY/2);
+                Imgproc.line(input, niP, neP, new Scalar(255, 255, 255), 15);
+            }
         }
+//
+//
+//        ArrayList<Vector3D> ps = new ArrayList<>(Arrays.asList(
+//                new Vector3D(10,10,10),
+//                new Vector3D(10,-10,10),
+//                new Vector3D(-10,-10,10),
+//                new Vector3D(-10,10,10),
+//                new Vector3D(10,10,10),
+//                new Vector3D(10,10,-10),
+//                new Vector3D(-10,10,-10),
+//                new Vector3D(-10,-10,-10),
+//                new Vector3D(10,-10,-10),
+//                new Vector3D(10,10,-10)));
+//        Double[] list = {0.0,30.0,0.0};
+//        ps = rotate(list, ps);
+//        Imgproc.line(input,new Point(orig.getX(), orig.getZ()),new Point(orig.getX(), orig.getZ()),new Scalar(0,0,0), 50);
+//
+//        ArrayList<Point> normalP = projection2(orig, ps);
+//
+//        for (int i=0; i < normalP.size(); i++){
+//
+//            Point niP = new Point(normalP.get(i).x + 900, -normalP.get(i).y + 1200);
+//            int e = (i + 1) % normalP.size();
+//            Point neP = new Point(normalP.get(e).x + 900, -normalP.get(e).y + 1200);
+//            Imgproc.line(input, niP, neP, new Scalar(100, 100, 255), 15);
+//
+////            Imgproc.line(input, niP, new Point(900,1200), new Scalar(100, 100, 255), 15);
+//
+//
+//            Imgproc.putText(input, Integer.toString(i), niP, Imgproc.FONT_HERSHEY_DUPLEX, 5, new Scalar(255,0,0));
+//
+//        }
         return input;
     }
 
