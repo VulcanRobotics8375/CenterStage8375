@@ -56,7 +56,7 @@ public class Projection extends AprilTagDetectionPipeline {
     double cx;
     double cy;
 
-    public double Scale = 10;
+    public double Scale = 3;
 
 
     double pi = 3.141;
@@ -96,18 +96,28 @@ public class Projection extends AprilTagDetectionPipeline {
             AprilTagPose pose = det.pose;
             x += p.get(0).getX() + pose.z * FEET_PER_METER;
             y += p.get(0).getY() + pose.x * FEET_PER_METER;
-            z += p.get(0).getZ() + pose.y * FEET_PER_METER;
+            z += p.get(0).getZ() - pose.y * FEET_PER_METER;
+
             Orientation rot = Orientation.getOrientation(det.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS);
 
-            pan += rot.thirdAngle;
-            tilt += rot.firstAngle;
+            pan -= rot.thirdAngle;
+            tilt -= rot.firstAngle;
             polyList.add(p);
         }
         int size = polyList.size();
-        Imgproc.putText(input, String.valueOf(size), new Point(100,100), Imgproc.FONT_HERSHEY_COMPLEX_SMALL, 10, new Scalar(255,255,255),1);
-        orig = new Vector3D(x/size,y/size,z/size);
-        pan /= size;
-        tilt /= size;
+        if (size > 0) {
+            Imgproc.putText(input, String.valueOf(size), new Point(100,100), Imgproc.FONT_HERSHEY_COMPLEX_SMALL, 10, new Scalar(255,255,255),1);
+            orig = new Vector3D(x/size,y/size,z/size);
+            pan /= size;
+            tilt /= size;
+        }
+
+        polyList.add(new ArrayList<Vector3D>(Arrays.asList(
+                polyList.get(0).get(0),
+                new Vector3D(polyList.get(0).get(0).getX(), polyList.get(0).get(0).getY(), polyList.get(0).get(0).getZ()-30),
+                new Vector3D(polyList.get(polyList.size()-1).get(0).getX(), polyList.get(0).get(0).getY(), polyList.get(0).get(0).getZ()-30),
+                polyList.get(polyList.size()-1).get(0))));
+
         for (ArrayList<Vector3D> p : polyList) {
             ArrayList<Point> normal = projection2(orig, p);
             for (int i=0; i < normal.size(); i++) {
@@ -145,6 +155,28 @@ public class Projection extends AprilTagDetectionPipeline {
         }
 
         return points;
+    }
+
+    public Point projection2(Vector3D orig, Vector3D point) {
+        double cp = Math.cos(pan)+0.00001;
+        double sp = Math.sin(pan)+0.00001 ;
+        double ct = Math.cos(tilt)+0.00001;
+        double st = Math.sin(tilt)+0.00001;
+
+            double dX = point.getX() - orig.getX();
+            double dY = point.getY() - orig.getY();
+            double dZ = point.getZ() - orig.getZ();
+
+            double s = ((((ct*cp*ct*cp)))+(ct*sp*ct*sp)+(st*st))/(-(ct*cp*dX)-(ct*sp*dY)+(st*dZ));
+            if (s < 0 || s>L){return new Point(1000,100);}
+            double X = L*((s*dX)-(ct*cp));
+            double Y = L*((ct*sp)-(s*dY));
+            double Z = L*((s*dZ)+st);
+
+            double fX = (sp*X)+(cp*Y);
+            double fY = (((cp*X)-(sp*Y))*st)-(Z*ct);
+
+        return new Point(fX, fY);
     }
 
 
@@ -216,12 +248,9 @@ public class Projection extends AprilTagDetectionPipeline {
 
     private ArrayList<Vector3D> findTags(int id) {
         double x,y,z;
-//        if (id == 1){x = 0; y = 0; z = 0;}
-//        else if (id == 2){x = 0; y = 0; z = 0;}
-//        else if (id == 3){x = 0; y = 0; z = 0;}
-        if (id == 4){x = 0; y = 0; z = 0;}
-        else if (id == 5){x = 6; y = 0; z = 0;}
-        else if (id == 6){x = 6; y = 0; z = 0;}
+        if (id == 4){x = 8; y = 0; z = 10;}
+        else if (id == 5){x = 16; y = 0; z = 10;}
+        else if (id == 6){x = 24; y = 0; z = 10;}
         else {return new ArrayList<>();}
         return new ArrayList<>(Arrays.asList(
                 new Vector3D(x,y,z),
