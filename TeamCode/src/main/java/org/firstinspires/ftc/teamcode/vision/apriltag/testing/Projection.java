@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -20,6 +21,7 @@ import org.openftc.apriltag.AprilTagPose;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Projection extends AprilTagDetectionPipeline {
 
@@ -80,6 +82,8 @@ public class Projection extends AprilTagDetectionPipeline {
 
     double x = 0; double y = 0; double z = 0;
 
+    double initialpan, initialtilt;
+
 
     Vector3D orig;
     public double Scaler = 10.0;
@@ -105,7 +109,7 @@ public class Projection extends AprilTagDetectionPipeline {
         tilt = 0;
         AprilTag(input);
         ArrayList<ArrayList<Vector3D>> polyList = new ArrayList<>();
-        if (detections.size() > 0) {
+        if (detections.size() > 1) {
             Orientation rot = Orientation.getOrientation(detections.get(0).pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS);
             Point p1 = new Point(time.milliseconds() * 0.05, rot.firstAngle * 200 + 200);
             Point p2 = new Point(time.milliseconds() * 0.05, rot.secondAngle * 200 + 200);
@@ -113,9 +117,9 @@ public class Projection extends AprilTagDetectionPipeline {
             Point p4 = new Point(time.milliseconds() * 0.05, detections.get(0).pose.x * 100 + 200);
             Point p5 = new Point(time.milliseconds() * 0.05, detections.get(0).pose.y * 100 + 200);
             Point p6 = new Point(time.milliseconds() * 0.05, detections.get(0).pose.z * 100 + 200);
-            Imgproc.putText(input, Double.toString(rot.firstAngle), p1, 5, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
-            Imgproc.putText(input, Double.toString(rot.secondAngle), p2, 5, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
-            Imgproc.putText(input, Double.toString(rot.thirdAngle), p3, 5, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
+            Imgproc.putText(input, Double.toString(rot.firstAngle), p1, 3, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
+            Imgproc.putText(input, Double.toString(rot.secondAngle), p2, 3, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
+            Imgproc.putText(input, Double.toString(rot.thirdAngle), p3, 3, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
 
             Imgproc.putText(input, Double.toString(detections.get(0).pose.x), p4, 5, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
             Imgproc.putText(input, Double.toString(detections.get(0).pose.y), p5, 5, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
@@ -127,10 +131,12 @@ public class Projection extends AprilTagDetectionPipeline {
             log4.add(p4);
             log5.add(p5);
             log6.add(p6);
+
         }
-        plot(input, log, new Scalar(255, 0, 0));
-        plot(input, log1, new Scalar(255, 255, 0));
-        plot(input, log2, new Scalar(255, 0, 255));
+
+//        plot(input, log, new Scalar(255, 0, 0));
+//        plot(input, log1, new Scalar(255, 0, 0));
+//        plot(input, log2, new Scalar(255, 0, 0));
         plot(input, log4, new Scalar(0, 0, 255));
         plot(input, log5, new Scalar(0, 255, 0));
         plot(input, log6, new Scalar(255, 255, 255));
@@ -144,8 +150,9 @@ public class Projection extends AprilTagDetectionPipeline {
             log5.clear();
             log6.clear();
         }
-
+        AprilTagPose lastPose = null;
         for (AprilTagDetection det : detections) {
+            
             ArrayList<Vector3D> p = findTags(det.id);
             Imgproc.putText(input, String.valueOf(det.id), det.center, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, 10, new Scalar(255, 255, 255), 1);
             if (p.size() == 0) {
@@ -153,16 +160,34 @@ public class Projection extends AprilTagDetectionPipeline {
             }
             Double[] l = {0.25, 0.0, 1.5};
             p = rotate(l, p);
+
             AprilTagPose pose = det.pose;
-            x += p.get(0).getX() + pose.z * FEET_PER_METER;
-            y += p.get(0).getY() + pose.x * FEET_PER_METER;
-            z += p.get(0).getZ() - pose.y * FEET_PER_METER;
+            if (lastPose == null) {lastPose = pose;}
+
+//            if ()
 
             Orientation rot = Orientation.getOrientation(det.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS);
+
+            Double[] r = {(double) -rot.thirdAngle, (double) -rot.firstAngle, 0.0};
+//            Double[] r = {0.0,0.0,0.0};
+
+            ArrayList<Vector3D> rotPose = rotate(r, new ArrayList<>(Collections.singletonList(new Vector3D(pose.z * FEET_PER_METER, pose.x * FEET_PER_METER, pose.y * FEET_PER_METER))));
+
+//            x += p.get(0).getX() + pose.z * FEET_PER_METER;
+//            y += p.get(0).getY() + pose.x * FEET_PER_METER;
+//            z += p.get(0).getZ() - pose.y * FEET_PER_METER;
+
+            x += p.get(0).getX() + rotPose.get(0).getX();
+//            x = 30;
+            y += p.get(0).getY() + rotPose.get(0).getY();
+//            left = negative for y, which is already the caseoh
+//            z += p.get(0).getZ() + rotPose.get(0).getZ();
+            z = 0;
 
             pan -= rot.thirdAngle;
             tilt -= rot.firstAngle;
             polyList.add(p);
+            lastPose = pose;
         }
         int size = polyList.size();
         if (size > 0) {
@@ -308,9 +333,9 @@ public class Projection extends AprilTagDetectionPipeline {
 
     private ArrayList<Vector3D> findTags(int id) {
         double x,y,z;
-        if (id == 4){x = 8; y = 0; z = 10;}
-        else if (id == 5){x = 16; y = 0; z = 10;}
-        else if (id == 6){x = 24; y = 0; z = 10;}
+        if (id == 4){x = -6; y = 0; z = 0;}
+        else if (id == 5){x = 0; y = 0; z = 0;}
+        else if (id == 6){x = 6; y = 0; z = 0;}
         else {return new ArrayList<>();}
         return new ArrayList<>(Arrays.asList(
                 new Vector3D(x,y,z),
@@ -319,12 +344,13 @@ public class Projection extends AprilTagDetectionPipeline {
                 new Vector3D(x,y,z+Scale)));
     }
     public void plot(Mat input, ArrayList<Point> log, Scalar Color) {
-        for (int i = 0; i < log.size() - 1; i++) {
-            if (log.get(i + 1).y > log.get(i).y + 0.75 * log.get(i).y) {
-                log.remove(i + 1);
-            }
-            if (i == 0 || log.get(log.size() - 1).y > log.get(i).y + 0.75 * log.get(i).y)
-                Imgproc.line(input, log.get(i), log.get(i + 1), Color, 3);
+        for (int i = 0; i < log.size()-1; i++) {
+//            if (log.get(i + 1).y > log.get(i).y + 0.9 * log.get(i).y) {
+//                Imgproc.circle(input, log.get(i+1), 3, new Scalar(255,255,255), 3);
+//                log.remove(i + 1);
+//            }
+//            if (i == 0 || log.get(log.size() - 1).y > log.get(i).y + 0.75 * log.get(i).y)
+                Imgproc.line(input, log.get(i), log.get(i+1), Color, 3);
 //            Point pon = new Point(log.get(i).x, Math.abs(log.get(i).y-log.get(i+1).y));
 //            Imgproc.line(input,pon,pon,Color,4);
 
