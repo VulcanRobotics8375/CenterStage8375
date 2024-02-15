@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.vision.apriltag.testing;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -100,6 +102,7 @@ public class Projection extends AprilTagDetectionPipeline {
             detectionsUpdate = detections;
         }
     }
+    @SuppressLint("DefaultLocale")
     @Override
     public Mat processFrame(Mat input) {
         x = 0;
@@ -117,13 +120,13 @@ public class Projection extends AprilTagDetectionPipeline {
             Point p4 = new Point(time.milliseconds() * 0.05, detections.get(0).pose.x * 100 + 200);
             Point p5 = new Point(time.milliseconds() * 0.05, detections.get(0).pose.y * 100 + 200);
             Point p6 = new Point(time.milliseconds() * 0.05, detections.get(0).pose.z * 100 + 200);
-            Imgproc.putText(input, Double.toString(rot.firstAngle), p1, 3, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
-            Imgproc.putText(input, Double.toString(rot.secondAngle), p2, 3, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
-            Imgproc.putText(input, Double.toString(rot.thirdAngle), p3, 3, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
+            Imgproc.putText(input, String.format("%.2f",Math.toDegrees(rot.firstAngle)), p1, 3, 1, new Scalar(255, 255, 255));
+            Imgproc.putText(input, String.format("%.2f",Math.toDegrees(rot.secondAngle)), p2, 3, 1, new Scalar(255, 255, 255));
+            Imgproc.putText(input, String.format("%.2f",Math.toDegrees(rot.thirdAngle)), p3, 3, 1, new Scalar(255, 255, 255));
 
-            Imgproc.putText(input, Double.toString(detections.get(0).pose.x), p4, 5, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
-            Imgproc.putText(input, Double.toString(detections.get(0).pose.y), p5, 5, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
-            Imgproc.putText(input, Double.toString(detections.get(0).pose.z), p6, 5, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
+//            Imgproc.putText(input, Double.toString(detections.get(0).pose.x), p4, 5, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
+//            Imgproc.putText(input, Double.toString(detections.get(0).pose.y), p5, 5, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
+//            Imgproc.putText(input, Double.toString(detections.get(0).pose.z), p6, 5, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, new Scalar(255, 255, 255));
 
             log.add(p1);
             log1.add(p2);
@@ -134,12 +137,12 @@ public class Projection extends AprilTagDetectionPipeline {
 
         }
 
-//        plot(input, log, new Scalar(255, 0, 0));
-//        plot(input, log1, new Scalar(255, 0, 0));
-//        plot(input, log2, new Scalar(255, 0, 0));
-        plot(input, log4, new Scalar(0, 0, 255));
-        plot(input, log5, new Scalar(0, 255, 0));
-        plot(input, log6, new Scalar(255, 255, 255));
+        plot(input, log, new Scalar(255, 0, 0));
+        plot(input, log1, new Scalar(255, 100, 0));
+        plot(input, log2, new Scalar(255, 200, 0));
+//        plot(input, log4, new Scalar(0, 0, 255));
+//        plot(input, log5, new Scalar(0, 255, 0));
+//        plot(input, log6, new Scalar(255, 255, 255));
 
         if (time.milliseconds() * 0.05 > 640) {
             time.reset();
@@ -177,15 +180,21 @@ public class Projection extends AprilTagDetectionPipeline {
 //            y += p.get(0).getY() + pose.x * FEET_PER_METER;
 //            z += p.get(0).getZ() - pose.y * FEET_PER_METER;
 
-            x += p.get(0).getX() + rotPose.get(0).getX();
-//            x = 30;
-            y += p.get(0).getY() + rotPose.get(0).getY();
+//            x += p.get(0).getX() + rotPose.get(0).getX();
+//            y += p.get(0).getY() + rotPose.get(0).getY();
+
+            double distance = Math.sqrt(Math.pow(pose.z * FEET_PER_METER,2) +  Math.pow(pose.x * FEET_PER_METER,2));
+
+            x += p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
+            y += p.get(0).getY() + Math.sin(rot.firstAngle) * distance;
+//            x += p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
+//            y += p.get(0).getY() + Math.sin(rot.firstAngle) * distance;
 //            left = negative for y, which is already the caseoh
 //            z += p.get(0).getZ() + rotPose.get(0).getZ();
             z = 0;
 
-            pan -= rot.thirdAngle;
-            tilt -= rot.firstAngle;
+            pan -= rot.firstAngle;
+            tilt += rot.secondAngle;
             polyList.add(p);
             lastPose = pose;
         }
