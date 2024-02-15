@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -72,7 +71,7 @@ public class Projection extends AprilTagDetectionPipeline {
     ArrayList<Point> log5 = new ArrayList<>();
     ArrayList<Point> log6 = new ArrayList<>();
 
-    public double Scale = 3;
+    public double Scale = 1.5;
 
 
     double pi = 3.141;
@@ -185,16 +184,15 @@ public class Projection extends AprilTagDetectionPipeline {
 
             double distance = Math.sqrt(Math.pow(pose.z * FEET_PER_METER,2) +  Math.pow(pose.x * FEET_PER_METER,2));
 
-            x += p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
-            y += p.get(0).getY() + Math.sin(rot.firstAngle) * distance;
 //            x += p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
 //            y += p.get(0).getY() + Math.sin(rot.firstAngle) * distance;
+            x += p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
+            y += p.get(0).getY() + Math.sin(rot.firstAngle) * distance;
 //            left = negative for y, which is already the caseoh
 //            z += p.get(0).getZ() + rotPose.get(0).getZ();
             z = 0;
 
             pan -= rot.firstAngle;
-            tilt += rot.secondAngle;
             polyList.add(p);
             lastPose = pose;
         }
@@ -203,14 +201,14 @@ public class Projection extends AprilTagDetectionPipeline {
             Imgproc.putText(input, String.valueOf(size), new Point(100, 100), Imgproc.FONT_HERSHEY_COMPLEX_SMALL, 10, new Scalar(255, 255, 255), 1);
             orig = new Vector3D(x / size, y / size, z / size);
             pan /= size;
-            tilt /= size;
+//            tilt /= size;
         }
 
-        polyList.add(new ArrayList<Vector3D>(Arrays.asList(
-                polyList.get(0).get(0),
-                new Vector3D(polyList.get(0).get(0).getX(), polyList.get(0).get(0).getY(), polyList.get(0).get(0).getZ() - 30),
-                new Vector3D(polyList.get(polyList.size() - 1).get(0).getX(), polyList.get(0).get(0).getY(), polyList.get(0).get(0).getZ() - 30),
-                polyList.get(polyList.size() - 1).get(0))));
+//        polyList.add(new ArrayList<Vector3D>(Arrays.asList(
+//                polyList.get(0).get(0),
+//                new Vector3D(polyList.get(0).get(0).getX(), polyList.get(0).get(0).getY(), polyList.get(0).get(0).getZ() - 30),
+//                new Vector3D(polyList.get(polyList.size() - 1).get(0).getX(), polyList.get(0).get(0).getY(), polyList.get(0).get(0).getZ() - 30),
+//                polyList.get(polyList.size() - 1).get(0))));
 
         for (ArrayList<Vector3D> p : polyList) {
             ArrayList<Point> normal = projection2(orig, p);
@@ -342,16 +340,29 @@ public class Projection extends AprilTagDetectionPipeline {
 
     private ArrayList<Vector3D> findTags(int id) {
         double x,y,z;
-        if (id == 4){x = -6; y = 0; z = 0;}
-        else if (id == 5){x = 0; y = 0; z = 0;}
-        else if (id == 6){x = 6; y = 0; z = 0;}
+        if (id == 4){x = -3; y = 10; z = -3;}
+        else if (id == 5){x = 0; y = 10; z = -3;}
+        else if (id == 6){x = 3; y = 10; z = -3;}
         else {return new ArrayList<>();}
+        ArrayList<Vector3D> poly = new ArrayList<>(Arrays.asList(
+                new Vector3D(x,y,z),
+                new Vector3D(x+Scale,y,z),
+                new Vector3D(x+Scale,y,z+Scale),
+                new Vector3D(x,y,z+Scale)));
+        return poly;
+    }
+
+    ArrayList<Vector3D> Rect(Vector3D xyz, double scale) {
         return new ArrayList<>(Arrays.asList(
                 new Vector3D(x,y,z),
                 new Vector3D(x+Scale,y,z),
                 new Vector3D(x+Scale,y,z+Scale),
                 new Vector3D(x,y,z+Scale)));
     }
+
+
+
+
     public void plot(Mat input, ArrayList<Point> log, Scalar Color) {
         for (int i = 0; i < log.size()-1; i++) {
 //            if (log.get(i + 1).y > log.get(i).y + 0.9 * log.get(i).y) {
