@@ -173,7 +173,7 @@ public class Projection extends AprilTagDetectionPipeline {
             x += p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
             y += Math.sin(rot.firstAngle) * distance;
             z += Math.sin(rot.secondAngle) * distance;
-            pan += -rot.firstAngle;
+            pan += -Math.abs(rot.firstAngle);
 //            tilt -= rot.secondAngle;
             polyList.add(p);
         }
@@ -294,9 +294,9 @@ public class Projection extends AprilTagDetectionPipeline {
 
     private ArrayList<Vector3D> findTags(int id) {
         double x,y,z;
-        if (id == 4){x = -2.3; y =0; z = 0;}
-        else if (id == 5){x = 0; y =0; z = 0;}
-        else if (id == 6){x = 2.3; y =0; z = 0;}
+        if (id == 4){x = -2.75; y =0; z = 0;}
+        else if (id == 5){x =0; y =0; z = 0;}
+        else if (id == 6){x = 2.75; y =0; z = 0;}
         else {return new ArrayList<>();}
         ArrayList<Vector3D> poly = new ArrayList<>(Arrays.asList(
                 new Vector3D(x,y,z),
@@ -308,19 +308,25 @@ public class Projection extends AprilTagDetectionPipeline {
 
     private ArrayList<ArrayList<Vector3D>> findPixels(Vector3D AOrig) {
         ArrayList<ArrayList<Vector3D>> pixels = new ArrayList<>();
-        for (int o=0; o < 8; o++) {
-            Vector3D temp = new Vector3D(AOrig.getX()-0.6+Scale/2, AOrig.getY()+o*0.2, AOrig.getZ()-1.2-o*1.2);
-            Vector3D temp2 = new Vector3D(AOrig.getX()+0.6+Scale/2, AOrig.getY()+o*0.2, AOrig.getZ()-1.2-o*1.2);
-            pixels.add(Hex(temp2,0.25));
-            pixels.add(Hex(temp,0.25));
+        for (int o=0; o < 8; o+=2) {
+
+            Vector3D temp = new Vector3D(AOrig.getX() - 0.6 + Scale / 2, AOrig.getY() + o * 0.2, AOrig.getZ() - 1.2 - o * 1.2);
+            Vector3D temp2 = new Vector3D(AOrig.getX() + 0.6 + Scale / 2, AOrig.getY() + o * 0.2, AOrig.getZ() - 1.2 - o * 1.2);
+            pixels.add(Hex(temp2, 0.25));
+            pixels.add(Hex(temp, 0.25));
+            Vector3D temp3 = new Vector3D(AOrig.getX() + 0.9 + Scale / 2, AOrig.getY() + (o+1) * 0.2, AOrig.getZ() - 1.2 - (o+1) * 1.2);
+            Vector3D temp4 = new Vector3D(AOrig.getX() - 0.35 + Scale / 2, AOrig.getY() + (o+1) * 0.2, AOrig.getZ() - 1.2 - (o+1) * 1.2);
+            pixels.add(Hex(temp3, 0.25));
+            pixels.add(Hex(temp4, 0.25));
+
         }
         return pixels;
     }
 
     ArrayList<Vector3D> Rect(Vector3D xyz, double scale) {
-        double x=xyz.getX();
+        double x = xyz.getX();
         double y = xyz.getY();
-        double z= xyz.getZ();
+        double z = xyz.getZ();
         return new ArrayList<>(Arrays.asList(
                 new Vector3D(x,y,z),
                 new Vector3D(x+scale,y,z),
@@ -334,11 +340,13 @@ public class Projection extends AprilTagDetectionPipeline {
         double z= xyz.getZ();
         ArrayList<Vector3D> ret = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
-            ret.add(new Vector3D(x + scale * Math.cos(i*2*Math.PI/6),y,z + scale * Math.sin(i*2*Math.PI/6)));
+            ret.add(new Vector3D(x + scale * Math.cos(i * 2 * Math.PI / 6), y, z + scale * Math.sin(i * 2 * Math.PI / 6)));
         }
         return ret;
 
-    }
+
+
+        }
 
 
 
