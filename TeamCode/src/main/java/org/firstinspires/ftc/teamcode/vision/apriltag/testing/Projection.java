@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.AprilTagDetectionPipeline;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.apriltag.AprilTagDetection;
@@ -23,15 +25,16 @@ import org.openftc.apriltag.AprilTagPose;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Vector;
 
 public class Projection extends AprilTagDetectionPipeline {
 
     public double tilt = 0;
 
-    final int SCREENX = 640; final int SCREENY = 1200;
+    final int SCREENX = 640; final int SCREENY = 1024;
     public double pan= 0;
 
-    public double L = 150;
+    public double L = 500;
     private long nativeApriltagPtr;
 
     public Projection() {
@@ -71,10 +74,8 @@ public class Projection extends AprilTagDetectionPipeline {
     ArrayList<Point> log5 = new ArrayList<>();
     ArrayList<Point> log6 = new ArrayList<>();
 
-    public double Scale = 1.5;
+    public double Scale = 0.6;
 
-
-    double pi = 3.141;
 
 
     // UNITS ARE METERS
@@ -82,12 +83,8 @@ public class Projection extends AprilTagDetectionPipeline {
 
 
     double x = 0; double y = 0; double z = 0;
-
-    double initialpan, initialtilt;
-
-
     Vector3D orig;
-    public double Scaler = 10.0;
+    Vector3D initialOrig = new Vector3D(-0.5,0,3);
 
     public void AprilTag(Mat input) {
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
@@ -154,81 +151,59 @@ public class Projection extends AprilTagDetectionPipeline {
         }
         AprilTagPose lastPose = null;
         for (AprilTagDetection det : detections) {
+
             
             ArrayList<Vector3D> p = findTags(det.id);
+            ArrayList<ArrayList<Vector3D>> pixels = findPixels(p.get(0));
             Imgproc.putText(input, String.valueOf(det.id), det.center, Imgproc.FONT_HERSHEY_COMPLEX_SMALL, 10, new Scalar(255, 255, 255), 1);
             if (p.size() == 0) {
                 continue;
             }
-            Double[] l = {0.25, 0.0, 1.5};
-            p = rotate(l, p);
-
-            AprilTagPose pose = det.pose;
-            if (lastPose == null) {lastPose = pose;}
-
-//            if ()
-
             Orientation rot = Orientation.getOrientation(det.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS);
 
-            Double[] r = {(double) -rot.thirdAngle, (double) -rot.firstAngle, 0.0};
-//            Double[] r = {0.0,0.0,0.0};
+            Double[] l = {0.0, 0.0, (double) -rot.firstAngle + Math.PI / 2};
+            Double[] t = {0.4, 0.0, (double) -rot.firstAngle + Math.PI / 2};
+            p = rotate(l, p);
+            for (ArrayList<Vector3D> pixel : pixels) {polyList.add(rotate(t, pixel));}
+            AprilTagPose pose = det.pose;
 
-            ArrayList<Vector3D> rotPose = rotate(r, new ArrayList<>(Collections.singletonList(new Vector3D(pose.z * FEET_PER_METER, pose.x * FEET_PER_METER, pose.y * FEET_PER_METER))));
+            double distance = Math.sqrt(Math.pow(pose.z * FEET_PER_METER,2) +  Math.pow(pose.x * FEET_PER_METER,2)+  Math.pow(pose.y * FEET_PER_METER,2));
 
-//            x += p.get(0).getX() + pose.z * FEET_PER_METER;
-//            y += p.get(0).getY() + pose.x * FEET_PER_METER;
-//            z += p.get(0).getZ() - pose.y * FEET_PER_METER;
 
-//            x += p.get(0).getX() + rotPose.get(0).getX();
-//            y += p.get(0).getY() + rotPose.get(0).getY();
-
-            double distance = Math.sqrt(Math.pow(pose.z * FEET_PER_METER,2) +  Math.pow(pose.x * FEET_PER_METER,2));
-
-//            x += p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
-//            y += p.get(0).getY() + Math.sin(rot.firstAngle) * distance;
             x += p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
-            y += p.get(0).getY() + Math.sin(rot.firstAngle) * distance;
-//            left = negative for y, which is already the caseoh
-//            z += p.get(0).getZ() + rotPose.get(0).getZ();
-            z = 0;
-
-            pan -= rot.firstAngle;
+            y += Math.sin(rot.firstAngle) * distance;
+            z += Math.sin(rot.secondAngle) * distance;
+            pan += -rot.firstAngle;
+//            tilt -= rot.secondAngle;
             polyList.add(p);
-            lastPose = pose;
         }
-        int size = polyList.size();
+        int size = detections.size();
         if (size > 0) {
-            Imgproc.putText(input, String.valueOf(size), new Point(100, 100), Imgproc.FONT_HERSHEY_COMPLEX_SMALL, 10, new Scalar(255, 255, 255), 1);
-            orig = new Vector3D(x / size, y / size, z / size);
+            orig = new Vector3D(x / size, y / size, z / size).subtract(initialOrig);
             pan /= size;
 //            tilt /= size;
         }
 
-//        polyList.add(new ArrayList<Vector3D>(Arrays.asList(
-//                polyList.get(0).get(0),
-//                new Vector3D(polyList.get(0).get(0).getX(), polyList.get(0).get(0).getY(), polyList.get(0).get(0).getZ() - 30),
-//                new Vector3D(polyList.get(polyList.size() - 1).get(0).getX(), polyList.get(0).get(0).getY(), polyList.get(0).get(0).getZ() - 30),
-//                polyList.get(polyList.size() - 1).get(0))));
 
         for (ArrayList<Vector3D> p : polyList) {
             ArrayList<Point> normal = projection2(orig, p);
             for (int i = 0; i < normal.size(); i++) {
-
                 Point niP = new Point(normal.get(i).x + (double) SCREENX / 2, -normal.get(i).y + (double) SCREENY / 2);
                 int e = (i + 1) % normal.size();
                 Point neP = new Point(normal.get(e).x + (double) SCREENX / 2, -normal.get(e).y + (double) SCREENY / 2);
                 Imgproc.line(input, niP, neP, new Scalar(255, 255, 255), 5);
             }
+
         }
         return input;
     }
 
     public ArrayList<Point> projection2(Vector3D orig, Iterable<Vector3D> pointList) {
         ArrayList<Point> points = new ArrayList<>();
-        double cp = Math.cos(pan)+0.00001;
-        double sp = Math.sin(pan)+0.00001 ;
-        double ct = Math.cos(tilt)+0.00001;
-        double st = Math.sin(tilt)+0.00001;
+        double cp = Math.cos(pan);
+        double sp = Math.sin(pan);
+        double ct = Math.cos(tilt);
+        double st = Math.sin(tilt);
         for (Vector3D point : pointList) {
 
             double dX = point.getX() - orig.getX();
@@ -242,7 +217,7 @@ public class Projection extends AprilTagDetectionPipeline {
             double Z = L*((s*dZ)+st);
 
             double fX = (sp*X)+(cp*Y);
-            double fY = (((cp*X)-(sp*Y))*st)-(Z*ct);
+            double fY = -(((cp*X)-(sp*Y))*st)-(Z*ct);
             points.add(new Point(fX, fY));
         }
 
@@ -269,27 +244,6 @@ public class Projection extends AprilTagDetectionPipeline {
             double fY = (((cp*X)-(sp*Y))*st)-(Z*ct);
 
         return new Point(fX, fY);
-    }
-
-
-
-    private void translate(ArrayList<Vector3D> v, Vector3D translate){
-        for (Vector3D v3 : v) {
-            double vX = v3.getX() + translate.getX();
-            double vY = v3.getY() + translate.getY();
-            double vZ = v3.getZ() + translate.getZ();
-            new Vector3D(vX, vY, vZ);
-        }
-    }
-    private ArrayList<Vector3D> TempTranslate(ArrayList<Vector3D> v, Vector3D translate){
-        ArrayList<Vector3D> vector3DS=new ArrayList<>();
-        for (Vector3D v3 : v) {
-            double vX = v3.getX() + translate.getX();
-            double vY = v3.getY() + translate.getY();
-            double vZ = v3.getZ() + translate.getZ();
-            vector3DS.add(new Vector3D(vX, vY, vZ));
-        }
-        return vector3DS;
     }
 
     public ArrayList<Vector3D> rotate(Double[] t, ArrayList<Vector3D> points){
@@ -340,9 +294,9 @@ public class Projection extends AprilTagDetectionPipeline {
 
     private ArrayList<Vector3D> findTags(int id) {
         double x,y,z;
-        if (id == 4){x = -3; y = 10; z = -3;}
-        else if (id == 5){x = 0; y = 10; z = -3;}
-        else if (id == 6){x = 3; y = 10; z = -3;}
+        if (id == 4){x = -2.3; y =0; z = 0;}
+        else if (id == 5){x = 0; y =0; z = 0;}
+        else if (id == 6){x = 2.3; y =0; z = 0;}
         else {return new ArrayList<>();}
         ArrayList<Vector3D> poly = new ArrayList<>(Arrays.asList(
                 new Vector3D(x,y,z),
@@ -352,12 +306,38 @@ public class Projection extends AprilTagDetectionPipeline {
         return poly;
     }
 
+    private ArrayList<ArrayList<Vector3D>> findPixels(Vector3D AOrig) {
+        ArrayList<ArrayList<Vector3D>> pixels = new ArrayList<>();
+        for (int o=0; o < 8; o++) {
+            Vector3D temp = new Vector3D(AOrig.getX()-0.6+Scale/2, AOrig.getY()+o*0.2, AOrig.getZ()-1.2-o*1.2);
+            Vector3D temp2 = new Vector3D(AOrig.getX()+0.6+Scale/2, AOrig.getY()+o*0.2, AOrig.getZ()-1.2-o*1.2);
+            pixels.add(Hex(temp2,0.25));
+            pixels.add(Hex(temp,0.25));
+        }
+        return pixels;
+    }
+
     ArrayList<Vector3D> Rect(Vector3D xyz, double scale) {
+        double x=xyz.getX();
+        double y = xyz.getY();
+        double z= xyz.getZ();
         return new ArrayList<>(Arrays.asList(
                 new Vector3D(x,y,z),
-                new Vector3D(x+Scale,y,z),
-                new Vector3D(x+Scale,y,z+Scale),
-                new Vector3D(x,y,z+Scale)));
+                new Vector3D(x+scale,y,z),
+                new Vector3D(x+scale,y,z+scale),
+                new Vector3D(x,y,z+scale)));
+    }
+
+    ArrayList<Vector3D> Hex(Vector3D xyz, double scale) {
+        double x=xyz.getX();
+        double y = xyz.getY();
+        double z= xyz.getZ();
+        ArrayList<Vector3D> ret = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            ret.add(new Vector3D(x + scale * Math.cos(i*2*Math.PI/6),y,z + scale * Math.sin(i*2*Math.PI/6)));
+        }
+        return ret;
+
     }
 
 
