@@ -28,8 +28,8 @@ public class Projection extends AprilTagDetectionPipeline {
 
     public double tilt = 0;
 
-    final int SCREENX = 640;
-    final int SCREENY = 1024;
+    final int SCREENX = 1280;
+    final int SCREENY = 720;
     public double pan = 0;
 
     public double L = 500;
@@ -89,7 +89,7 @@ public class Projection extends AprilTagDetectionPipeline {
     double y = 0;
     double z = 0;
     Vector3D orig = new Vector3D(0,0,0);
-    Vector3D initialOrig = new Vector3D(-0.5, 0, 3);
+    Vector3D initialOrig = new Vector3D(0, 0, 1);
 
     public void AprilTag(Mat input) {
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
@@ -103,7 +103,7 @@ public class Projection extends AprilTagDetectionPipeline {
         }
     }
 
-    Double[][][] Colors = new Double[12][7][4];
+    Double[][][] Colors = new Double[12][7][5];
     ArrayList<Vector3D> hexCenters = new ArrayList<Vector3D>();
 
     @SuppressLint("DefaultLocale")
@@ -136,13 +136,16 @@ public class Projection extends AprilTagDetectionPipeline {
             double distance = Math.sqrt(Math.pow(pose.z * FEET_PER_METER, 2) + Math.pow(pose.x * FEET_PER_METER, 2) + Math.pow(pose.y * FEET_PER_METER, 2));
 
 
-            x += p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
+            x += -p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
             y += Math.sin(rot.firstAngle) * distance;
             z += Math.sin(rot.secondAngle) * distance;
+//            x += -p.get(0).getX() + pose.z;
+//            y += pose.x;
+//            z += pose.y;
 //
 
 //            if (det.center.x < SCREENX /2.0) {
-            pan += Math.abs(rot.firstAngle);
+            pan -= Math.abs(rot.firstAngle);
 //            }
 //            else {
 //                pan -= Math.abs(rot.firstAngle);
@@ -156,10 +159,6 @@ public class Projection extends AprilTagDetectionPipeline {
         if (size > 0) {
             orig = new Vector3D(x / size, y / size, z / size).subtract(initialOrig);
             pan /= size;
-//            tilt /= size;
-            if (x > 0) {
-                pan *= -1;
-            }
 
         }
 
@@ -173,13 +172,13 @@ public class Projection extends AprilTagDetectionPipeline {
                 Imgproc.line(input, niP, neP, new Scalar(255, 255, 255), 5);
             }
         }
-        Double[] l = {Math.PI / 6, 0.0, Math.PI / 2};
+        Double[] l = {Math.PI / 8, 0.0, Math.PI / 2};
         findPixels();
 //        ArrayList<Pixel> hexes = new ArrayList<>();
         int yCounter = 0, xCounter = 0;
         for (int i = 0; i < hexCenters.size(); i++) {
             Vector3D h = hexCenters.get(i);
-            Double[] C = new Double[]{0.0, 0.0, 0.0, 0.0};
+            Double[] C = new Double[]{0.0, 0.0, 0.0, 0.0,0.0};
             ArrayList<Point> ps = projection2(orig, rotate(l, Hex(h, 0.4)));
 
 
@@ -204,6 +203,9 @@ public class Projection extends AprilTagDetectionPipeline {
                     } else if (inRange(mat.get(PY, PX), lowerBoundP, upperBoundP)) {
                         c = new Scalar(255, 0, 255);
                         C[3] += 1.0 / 6.0;
+                    }
+                    else {
+                        C[4] += 1.0/6.0;
                     }
                     Imgproc.line(input, new Point(PX, PY), new Point(PX2, PY2), c, 3);
                 }
@@ -279,30 +281,6 @@ public class Projection extends AprilTagDetectionPipeline {
         return points;
     }
 
-    public Point projection2(Vector3D orig, Vector3D point) {
-        double cp = Math.cos(pan);
-        double sp = Math.sin(pan);
-        double ct = Math.cos(tilt);
-        double st = Math.sin(tilt);
-
-        double dX = point.getX() - orig.getX();
-        double dY = point.getY() - orig.getY();
-        double dZ = point.getZ() - orig.getZ();
-
-        double s = ((((ct * cp * ct * cp))) + (ct * sp * ct * sp) + (st * st)) / (-(ct * cp * dX) - (ct * sp * dY) + (st * dZ));
-        if (s < 0 || s > L) {
-            return new Point(1000, 100);
-        }
-        double X = L * ((s * dX) - (ct * cp));
-        double Y = L * ((ct * sp) - (s * dY));
-        double Z = L * ((s * dZ) + st);
-
-        double fX = (sp * X) + (cp * Y);
-        double fY = -(((cp * X) - (sp * Y)) * st) - (Z * ct);
-
-        return new Point(fX, fY);
-    }
-
     public ArrayList<Vector3D> rotate(Double[] t, ArrayList<Vector3D> points) {
         RealMatrix[] RMs = buildMatrix(t);
         ArrayList<Vector3D> finalPoints = new ArrayList<>();
@@ -355,7 +333,7 @@ public class Projection extends AprilTagDetectionPipeline {
     private ArrayList<Vector3D> findTags(int id) {
         double x, y, z;
         if (id == 4) {
-            x = -2.75;
+            x = 2.5;
             y = 0;
             z = 0;
         } else if (id == 5) {
@@ -363,7 +341,7 @@ public class Projection extends AprilTagDetectionPipeline {
             y = 0;
             z = 0;
         } else if (id == 6) {
-            x = 2.75;
+            x = -2.5;
             y = 0;
             z = 0;
         } else {
@@ -381,11 +359,11 @@ public class Projection extends AprilTagDetectionPipeline {
         for (int o = 0; o < 12; o++) {
 
             for (int i = 0; i < 6; i++) {
-                Vector3D temp = new Vector3D(-2.75 - 0.6 + Scale / 2 + i * 1.4, 0, -1.2 - o * 1.2);
+                Vector3D temp = new Vector3D(-4.5 + Scale / 2 + i * 1.65, 0, -1.2 - o * 1.2);
                 if (!(o % 2 == 0)) {
-                    temp = new Vector3D(-2.75 - 0.6 + Scale / 2 + i * 1.4 + 0.5, 0, -1.2 - o * 1.2);
+                    temp = new Vector3D(-4.37 + Scale / 2 + i * 1.7 + 0.5, 0, -1.2 - o * 1.2);
                     if (i == 5) {
-                        Vector3D temp2 = new Vector3D(-2.75 - 0.6 + Scale / 2 + (-1) * 1.4 + 0.5, 0, -1.2 - o * 1.2);
+                        Vector3D temp2 = new Vector3D(-4.37 + Scale / 2 + (-1) * 1.7 + 0.5, 0, -1.2 - o * 1.2);
                         hexCenters.add(temp2);
                     }
 
@@ -394,17 +372,6 @@ public class Projection extends AprilTagDetectionPipeline {
 
             }
         }
-    }
-
-    ArrayList<Vector3D> Rect(Vector3D xyz, double scale) {
-        double x = xyz.getX();
-        double y = xyz.getY();
-        double z = xyz.getZ();
-        return new ArrayList<>(Arrays.asList(
-                new Vector3D(x, y, z),
-                new Vector3D(x + scale, y, z),
-                new Vector3D(x + scale, y, z + scale),
-                new Vector3D(x, y, z + scale)));
     }
 
     ArrayList<Vector3D> Hex(Vector3D xyz, double scale) {
@@ -419,17 +386,6 @@ public class Projection extends AprilTagDetectionPipeline {
 
     }
 
-    ArrayList<Point> Hex(Point xy, double scale) {
-        double x = xy.x;
-        double y = xy.y;
-
-        ArrayList<Point> ret = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            ret.add(new Point(x + scale * Math.cos(i * 2 * Math.PI / 6), y));
-        }
-        return ret;
-
-    }
 
     private boolean inRange(double[] pixel, Scalar lowHSV, Scalar highHSV) {
         if (pixel != null) {
@@ -441,12 +397,5 @@ public class Projection extends AprilTagDetectionPipeline {
         }
 
         return false;
-    }
-
-
-    public void plot(Mat input, ArrayList<Point> log, Scalar Color) {
-        for (int i = 0; i < log.size() - 1; i++) {
-            Imgproc.line(input, log.get(i), log.get(i + 1), Color, 3);
-        }
     }
 }
