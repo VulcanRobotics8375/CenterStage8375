@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.DrivetrainConfig;
 import org.firstinspires.ftc.teamcode.robotcorelib.opmode.OpModePipeline;
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
-import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
 
 @Disabled
 @TeleOp(name = "DTGearRatioTest")
@@ -21,7 +21,7 @@ public class DTGearRatioTest extends OpModePipeline {
     private ElapsedTime timer = new ElapsedTime();
 
     private boolean auto = false;
-    private Switch aSwitch = new Switch();
+    private Toggle aToggle = new Toggle();
 
     @Override
     public void init() {
@@ -39,7 +39,7 @@ public class DTGearRatioTest extends OpModePipeline {
             auto = false;
             subsystems.drivetrain.mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         } else {
-            if(aSwitch.simpleSwitch(gamepad1.a)) {
+            if(aToggle.toggle(gamepad1.a)) {
                 auto = !auto;
                 if(auto) {
                     timer.reset();

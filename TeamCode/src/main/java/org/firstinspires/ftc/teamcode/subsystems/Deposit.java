@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -10,9 +13,11 @@ import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.hardware.Encoder;
 
 
-public class Lift extends SubsystemState {
-    DcMotorEx lift;
-    Encoder liftEncoder;
+public class Deposit extends SubsystemState {
+    DcMotorEx liftLeft, liftRight;
+    RevColorSensorV3 colorSensorFirst, colorSensorLast;
+    Servo v4barLeft, v4barRight;
+    Servo depoFinger;
 
     public PID liftPID = new PID(0.025,0.0008,0.01,0.1);
     private boolean liftHolding = false;
@@ -35,11 +40,15 @@ public class Lift extends SubsystemState {
     private Toggle xToggle = new Toggle();
 
     public void init() {
-        lift = hardwareMap.get(DcMotorEx.class, "lift");
-//        lift.setDirection(DcMotorSimple.Direction.REVERSE);
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "front_right"));
-        liftEncoder.setDirection(Encoder.Direction.REVERSE);
+        liftLeft = hardwareMap.get(DcMotorEx.class, "liftLeft");
+        liftLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        liftRight = hardwareMap.get(DcMotorEx.class, "liftRight");
+        liftRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         liftPID.setOutputLimits(1.0);
     }

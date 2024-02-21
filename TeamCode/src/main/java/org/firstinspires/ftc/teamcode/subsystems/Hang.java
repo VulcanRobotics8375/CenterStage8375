@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robotcorelib.util.SubsystemState;
-import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
 
 
 public class Hang extends SubsystemState {
@@ -15,12 +15,12 @@ public class Hang extends SubsystemState {
     private final double HANG_UP = 0.146;
     private final double HANG_DOWN = 0.45;
     private double hangPos = HANG_DOWN;
-    private Switch hangSwitch = new Switch();
+    private Toggle hangToggle = new Toggle();
 
     private final double TRIGGER_HOME = 0.59582;
     private final double TRIGGER_OPEN = 0.20612;
     private double triggerPos = TRIGGER_HOME;
-    private Switch triggerSwitch = new Switch();
+    private Toggle triggerToggle = new Toggle();
 
     public boolean HANGING = false;
 
@@ -43,10 +43,10 @@ public class Hang extends SubsystemState {
     }
     
     public void run() {
-        if(hangSwitch.simpleSwitch(gamepad1.right_bumper)) {
+        if(hangToggle.toggle(gamepad1.right_bumper)) {
             hangPos = hangPos == HANG_DOWN ? HANG_UP : HANG_DOWN;
         }
-        if (triggerSwitch.simpleSwitch(gamepad1.left_bumper) && hangPos == HANG_UP) {
+        if (triggerToggle.toggle(gamepad1.left_bumper) && hangPos == HANG_UP) {
             triggerPos = triggerPos == TRIGGER_HOME ? TRIGGER_OPEN : TRIGGER_HOME;
         }
         hangRaise.setPosition(hangPos);

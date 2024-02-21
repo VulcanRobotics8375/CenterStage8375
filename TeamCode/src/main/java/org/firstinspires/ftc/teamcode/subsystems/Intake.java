@@ -1,181 +1,129 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.PwmControl;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.robotcorelib.math.filters.ExponentialMovingAverage;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.SubsystemState;
-import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
 
 
 public class Intake extends SubsystemState {
+    CRServo intake1, intake2;
+    Servo arm;
+    Servo v4barLeft, v4barRight;
+    AnalogInput v4barLeftEnc, v4barRightEnc;
+    Servo door;
+    DcMotorEx extendoLeft, extendoRight;
+    DigitalChannel breakBeamFirst;
+    DigitalChannel breakBeamSecond;
 
-    private ElapsedTime time = new ElapsedTime();
-    DcMotorEx intake;
-    private double power = 0;
-    private final double MULTIPLIER = 0.01;
-    private ExponentialMovingAverage emaCurrent = new ExponentialMovingAverage(0, 0.95);
-
-    private Switch aSwitch = new Switch(), bSwitch = new Switch();
-
-    public CRServo counterRoller;
-
-    public ServoImplEx leftServo,rightServo;
-    public double servoPosLeft = 0.5, servoPosRight = 0.5;
-    public boolean armDown = false;
-    public final double leftArmUp = 0.731;
-    public final double leftArmDown = 0.13;
-    public final double rightArmUp = 0.241;
-    public final double rightArmDown = 0.8579;
-
-    double upperrange = 0.0;
-
-    private boolean hopperReady = true;
-    private boolean liftReady = true;
-
-    private Switch intakeSwitch = new Switch();
-    private Switch transferSwitch = new Switch();
-
-    DigitalChannel breakBeam;
-    private int breakCount = 0;
-    private Switch breakSwitch = new Switch();
-    private ElapsedTime breakBeamTimeOffset = new ElapsedTime();
+    private Toggle intakeToggle = new Toggle();
+    private boolean intakePress = false;
+    private boolean intaking = false;
+    private Toggle extendoToggle = new Toggle();
+    private boolean extendPress = false;
+    private boolean extendoOut = false;
+    private boolean depoTransferReady = true;
 
     public void init() {
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        counterRoller = hardwareMap.get(CRServo.class, "counterroller");
-        counterRoller.setDirection(DcMotorSimple.Direction.REVERSE);
-        breakBeam = hardwareMap.get(DigitalChannel.class, "break_beam");
-        breakBeam.setMode(DigitalChannel.Mode.INPUT);
+        intake1 = hardwareMap.crservo.get("intake1");
+        intake2 = hardwareMap.crservo.get("intake2");
+        arm = hardwareMap.servo.get("intakeArm");
+        v4barLeft = hardwareMap.servo.get("v4barLeft");
+        v4barRight = hardwareMap.servo.get("v4barRight");
+        v4barLeftEnc = hardwareMap.get(AnalogInput.class, "v4barLeftEnc");
+        v4barRightEnc = hardwareMap.get(AnalogInput.class, "v4barRightEnc");
+        door = hardwareMap.servo.get("door");
+        extendoLeft = hardwareMap.get(DcMotorEx.class, "extendoLeft");
+        extendoRight = hardwareMap.get(DcMotorEx.class, "extendoRight");
 
-        leftServo = hardwareMap.get(ServoImplEx.class, "intake_arm_left");
-        rightServo = hardwareMap.get(ServoImplEx.class, "intake_arm_right");
-        PwmControl.PwmRange range = new PwmControl.PwmRange(500, 2500);
-        leftServo.setPwmRange(range);
-        rightServo.setPwmRange(range);
+        extendoLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendoLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        extendoRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendoRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        breakBeamFirst = hardwareMap.get(DigitalChannel.class, "breakBeamFirst");
+        breakBeamFirst.setMode(DigitalChannel.Mode.INPUT);
+
+        breakBeamSecond = hardwareMap.get(DigitalChannel.class, "breakBeamSecond");
+        breakBeamSecond.setMode(DigitalChannel.Mode.INPUT);
     }
 
     public void intake() {
-        transferSwitch.simpleSwitch(false);
-        if (intakeSwitch.simpleSwitch(true)) {
-            breakCount = 0;
-            power = 0.0;
-            armDown = false;
-        }
-
-        if (breakSwitch.simpleSwitch(!breakBeam.getState())) {
-            breakCount += 1;
-            breakBeamTimeOffset.reset();
-        }
-
-        if (aSwitch.simpleSwitch(gamepad2.a)) {
-            power = 1.0 - power;
-            armDown = !armDown;
-
-            if (!(hopperReady && liftReady)) {
-                power = 0.0;
-                armDown = false;
+        armDown();
+        doorClose();
+        if (intakeToggle.toggle(intakePress)) {
+            intaking = !intaking;
+            extendoOut = false;
+        } else if (extendoToggle.toggle(extendPress)) {
+            if (intaking) {
+                extendoOut = !extendoOut;
+            } else {
+                intaking = true;
+                extendoOut = true;
             }
         }
-
-        if (armDown) {
-            armDown();
+        if (intaking) {
+            v4barDown();
+            runIntake();
         } else {
-            armUp();
+            v4barHover();
+            stopIntake();
         }
-
-        intake.setPower(power);
-        counterRoller.setPower(power);
-        telemetry.addData("hopper ready", hopperReady);
-        telemetry.addData("lift ready", liftReady);
+        if (extendoOut) {
+            extendoOut();
+        } else {
+            extendoIn();
+        }
     }
 
     public void deposit() {
-        transferSwitch.simpleSwitch(false);
-        intakeSwitch.simpleSwitch(false);
-        intake.setPower(0);
-        counterRoller.setPower(0);
-        armUp();
+        armDown();
+        v4barUp();
+        stopIntake();
+        doorClose();
     }
 
     public void transfer() {
-        intakeSwitch.simpleSwitch(false);
-        if (transferSwitch.simpleSwitch(true)) {
-            power = -1.0;
+        armDown();
+        v4barUp();
+        if(transferReady()) {
+            doorOpen();
+            runIntake();
+        } else {
+            doorClose();
+            holdIntake();
         }
-
-        if(aSwitch.simpleSwitch(gamepad2.a)) {
-            power = -1.0 - power;
-        }
-        intake.setPower(power);
-        counterRoller.setPower(power);
-        armUp();
     }
 
-    public boolean intakingComplete() {
-        return false;
+    public void updateGamepad(boolean intake, boolean extend) {
+        this.intakePress = intake;
+        this.extendPress = extend;
     }
 
-    public void resetBreakBeam() {
-        breakCount = 0;
+    public void updateSubsystems(boolean depoTransferReady) {
+        this.depoTransferReady = depoTransferReady;
     }
 
-    public void updateHopperLift(boolean hopperReady, boolean liftReady) {
-        this.hopperReady = hopperReady;
-        this.liftReady = liftReady;
+    public boolean transferReady() {
+        return v4barIsUp() && depoTransferReady;
     }
 
+    public boolean v4barIsUp() {}
 
-//     public void intake(boolean button) {
-//         intake.setPower(button ? 1.0 : 0.0);
-//         counterRoller.setPower(button ? 1.0 : 0.0);
-//     }
-
-    public void armUp() {
-        leftServo.setPosition(leftArmUp);
-        rightServo.setPosition(rightArmUp);
-    }
-
-    public void armDown() {
-        leftServo.setPosition(leftArmDown);
-        rightServo.setPosition(rightArmDown);
-    }
-
-    private void setServos(double input) {
-        servoPosRight = Range.clip(servoPosRight + input, 0.0, 1.0);
-        rightServo.setPosition(servoPosRight);
-//        servoPosLeft = Range.clip(servoPosLeft - input, 0.0, 1.0);
-//        leftServo.setPosition(servoPosLeft);
-    }
-
-    public void testRight(double input) {
-        servoPosRight = Range.clip(servoPosRight + input*0.01, 0.0, 1.0);
-        rightServo.setPosition(servoPosRight);
-        telemetry.addData("right intake servo pos: ", servoPosRight);
-    }
-
-    public void testLeft(double input) {
-        servoPosLeft = Range.clip(servoPosLeft + input*0.01, 0.0, 1.0);
-        leftServo.setPosition(servoPosLeft);
-        telemetry.addData("left intake servo pos: ", servoPosLeft);
-    }
-
-    public void test(boolean intakeButton, boolean counterRollButton, boolean outtakeButton, double stick) {
-        intake.setPower(outtakeButton || intakeButton ? (intakeButton ? 1.0 : -1.0) : 0.0);
-        counterRoller.setPower(outtakeButton ? (counterRollButton || intakeButton ? 1.0 : -1.0) : 0.0);
-        setServos(stick * MULTIPLIER);
-//        upperrange = Range.clip(upperrange + (stick2 * 5), 500, 2500);
-//        telemetry.addData("left intake servo pos: ", servoPosLeft);
-        telemetry.addData("right intake servo pos: ", servoPosRight);
-    }
-
-    public void breakBeamTelemetry() {
-        telemetry.addData("breakbeam", breakBeam.getState());
-    }
+    public void armDown() {}
+    public void doorClose() {}
+    public void doorOpen() {}
+    public void v4barDown() {}
+    public void v4barHover() {}
+    public void v4barUp() {}
+    public void runIntake() {}
+    public void stopIntake() {}
+    public void holdIntake() {}
+    public void extendoIn() {}
+    public void extendoOut() {}
 }

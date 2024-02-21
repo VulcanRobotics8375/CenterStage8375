@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robotcorelib.util.SubsystemState;
-import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
 
 
 public class Hopper extends SubsystemState {
@@ -16,7 +16,7 @@ public class Hopper extends SubsystemState {
 
     private boolean doorButton = false;
     private boolean paddleButton = false;
-    private Switch aSwitch, bSwitch = new Switch();
+    private Toggle aToggle, bToggle = new Toggle();
 
     private double LEFT_ARM_UP = 0.7215;
     private double LEFT_ARM_DOWN = 0.5068;
@@ -38,13 +38,13 @@ public class Hopper extends SubsystemState {
 
     private boolean liftReady = false;
 
-    private Switch mosaicSwitch = new Switch();
+    private Toggle mosaicToggle = new Toggle();
     private boolean mosaicing = false;
-    private Switch depoSwitch = new Switch();
+    private Toggle depoToggle = new Toggle();
     private boolean depositing = false;
     private ElapsedTime depoTimer = new ElapsedTime();
 
-    private Switch hopperSwitch = new Switch();
+    private Toggle hopperToggle = new Toggle();
     private boolean hopperDown = false;
 
     public void init() {
@@ -71,7 +71,7 @@ public class Hopper extends SubsystemState {
     @Override
     public void deposit() {
         hopperUp();
-        if (mosaicSwitch.simpleSwitch(gamepad2.a) && !mosaicing && !depositing) { //Mosaic switch drops one at a time
+        if (mosaicToggle.toggle(gamepad2.a) && !mosaicing && !depositing) { //Mosaic switch drops one at a time
             mosaicing = true;
             depoTimer.reset();
             door.setPosition(DOOR_OPENED);
@@ -83,7 +83,7 @@ public class Hopper extends SubsystemState {
             paddle.setPosition(PADDLE_INSIDE);
         }
 
-        if (depoSwitch.simpleSwitch(gamepad2.b) && !depositing && !mosaicing) { //Depo switch drops both pixels at the same time
+        if (depoToggle.toggle(gamepad2.b) && !depositing && !mosaicing) { //Depo switch drops both pixels at the same time
             depositing = true;
             depoTimer.reset();
             door.setPosition(DOOR_OPENED);
@@ -130,7 +130,7 @@ public class Hopper extends SubsystemState {
     }
 
     public void testAnalog() {
-        if(hopperSwitch.simpleSwitch(gamepad2.y)) {
+        if(hopperToggle.toggle(gamepad2.y)) {
             hopperDown = !hopperDown;
         }
         if(hopperDown) {

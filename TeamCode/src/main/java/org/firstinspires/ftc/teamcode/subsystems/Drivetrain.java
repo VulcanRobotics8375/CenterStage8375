@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils.joystickCurve;
 import static org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils.shouldHardwareUpdate;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -13,13 +12,11 @@ import org.firstinspires.ftc.teamcode.robotcorelib.drive.DriveMode;
 import org.firstinspires.ftc.teamcode.robotcorelib.drive.DrivetrainImpl;
 import org.firstinspires.ftc.teamcode.robotcorelib.drive.DrivetrainVelocityMode;
 import org.firstinspires.ftc.teamcode.robotcorelib.math.control.SimplePID;
-import org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils;
-import org.firstinspires.ftc.teamcode.robotcorelib.motion.kinematics.DriveKinematics;
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.JoystickCurve;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.SubsystemState;
-import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.hardware.HardwarePrecision;
 
 public class Drivetrain extends SubsystemState implements DrivetrainImpl {
@@ -31,13 +28,13 @@ public class Drivetrain extends SubsystemState implements DrivetrainImpl {
     
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
     
-    private Switch transferSwitch = new Switch();
-    private Switch depoSwitch = new Switch();
+    private Toggle transferToggle = new Toggle();
+    private Toggle depoToggle = new Toggle();
 
-    private Switch headingStrafeLockSwitch = new Switch();
+    private Toggle headingStrafeLockToggle = new Toggle();
     private boolean headingStrafeLock = false;
     private SimplePID turnPID = new SimplePID(-2, -0.01, 0.0, -0.7, 0.7);
-    private Switch zeroHeadingSwitch = new Switch();
+    private Toggle zeroHeadingToggle = new Toggle();
     private double zeroHeading = 0.0;
 
     @Override
@@ -129,13 +126,13 @@ public class Drivetrain extends SubsystemState implements DrivetrainImpl {
     @Override
     public void intake() {
 //        depoSwitch.simpleSwitch(false);
-        transferSwitch.simpleSwitch(false);
+        transferToggle.toggle(false);
         mecanumDrive();
     }
 
     @Override
     public void deposit() {
-        transferSwitch.simpleSwitch(false);
+        transferToggle.toggle(false);
 //        if (depoSwitch.simpleSwitch(true)) {
 //            headingStrafeLock = false;
 //        }
@@ -158,8 +155,8 @@ public class Drivetrain extends SubsystemState implements DrivetrainImpl {
 
     @Override
     public void transfer() {
-        depoSwitch.simpleSwitch(false);
-        if (transferSwitch.simpleSwitch(true)) {
+        depoToggle.toggle(false);
+        if (transferToggle.toggle(true)) {
             gamepad1.rumble(500);
         }
         mecanumDrive();

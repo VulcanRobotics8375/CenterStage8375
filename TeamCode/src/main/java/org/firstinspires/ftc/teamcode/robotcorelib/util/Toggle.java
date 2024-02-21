@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.robotcorelib.util;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-public class Switch {
+public class Toggle {
     private boolean button = false;
 
-    public boolean simpleSwitch(boolean button) {
+    public boolean toggle(boolean button) {
         if (button && !this.button) {
             this.button = true;
             return true;

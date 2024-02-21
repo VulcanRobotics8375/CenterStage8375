@@ -3,28 +3,22 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.robot.MainConfig;
 import org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils;
 import org.firstinspires.ftc.teamcode.robotcorelib.motion.followers.ParametricGuidingVectorField;
-import org.firstinspires.ftc.teamcode.robotcorelib.motion.path.Path;
-import org.firstinspires.ftc.teamcode.robotcorelib.motion.path.PathBuilder;
 import org.firstinspires.ftc.teamcode.robotcorelib.opmode.AutoPipeline;
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.AutoTask;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
-import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
-import org.firstinspires.ftc.teamcode.vision.pixel.PixelCounterPipeline;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
 import org.firstinspires.ftc.teamcode.vision.pixel.RectPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
-
-import dalvik.system.DelegateLastClassLoader;
 
 @Autonomous(name="Auto")
 public class Auto extends AutoPipeline {
@@ -32,7 +26,7 @@ public class Auto extends AutoPipeline {
     private RectPipeline pipeline = new RectPipeline();
     private double speed = 0.65;
 
-    private Switch redSwitch = new Switch(), backDropSwitch = new Switch(), parkSwitch = new Switch();
+    private Toggle redToggle = new Toggle(), backDropToggle = new Toggle(), parkToggle = new Toggle();
     private boolean red = true, backDrop = true, parkLeft = true;
 
     ElapsedTime timer = new ElapsedTime();
@@ -62,12 +56,12 @@ public class Auto extends AutoPipeline {
 
         while (!isStarted() && !isStopRequested())
         {
-            if (redSwitch.simpleSwitch(gamepad1.a)) {
+            if (redToggle.toggle(gamepad1.a)) {
                 red = !red;
                 pipeline.detectRed(red);
             }
-            backDrop = backDropSwitch.simpleSwitch(gamepad1.b) ? !backDrop : backDrop;
-            parkLeft = parkSwitch.simpleSwitch(gamepad1.x) ? !parkLeft : parkLeft;
+            backDrop = backDropToggle.toggle(gamepad1.b) ? !backDrop : backDrop;
+            parkLeft = parkToggle.toggle(gamepad1.x) ? !parkLeft : parkLeft;
 
             telemetry.addData("Red side", red);
             telemetry.addData("Backdrop side", backDrop);

@@ -4,9 +4,8 @@ import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.robotcorelib.util.Subsystem;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.SubsystemState;
-import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
 
 
 public class DroneLauncher extends SubsystemState {
@@ -15,12 +14,12 @@ public class DroneLauncher extends SubsystemState {
     private final double LAUNCHER_UP = 0.49;
     private final double LAUNCHER_DOWN = 0.074;
     private double launcherPos = LAUNCHER_DOWN;
-    private Switch liftSwitch = new Switch();
+    private Toggle liftToggle = new Toggle();
 
     private double TRIGGER_HELD = 0.908;
     private double TRIGGER_RELEASED = 0.6;
     private double triggerPos = TRIGGER_HELD;
-    private Switch triggerSwitch = new Switch();
+    private Toggle triggerToggle = new Toggle();
 
     public void init() {
         lifter = hardwareMap.get(ServoImplEx.class, "launch_lift");
@@ -31,11 +30,11 @@ public class DroneLauncher extends SubsystemState {
     }
 
     public void run() {
-        if(liftSwitch.simpleSwitch(gamepad2.right_bumper)) {
+        if(liftToggle.toggle(gamepad2.right_bumper)) {
             launcherPos = launcherPos == LAUNCHER_DOWN ? LAUNCHER_UP : LAUNCHER_DOWN;
         }
         if (launcherPos == LAUNCHER_UP) {
-            if (triggerSwitch.simpleSwitch(gamepad2.left_bumper)) {
+            if (triggerToggle.toggle(gamepad2.left_bumper)) {
                 triggerPos = TRIGGER_RELEASED;
             }
         }

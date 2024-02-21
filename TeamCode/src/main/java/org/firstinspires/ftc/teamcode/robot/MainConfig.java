@@ -60,7 +60,6 @@ public class MainConfig extends RobotConfig {
     public Hopper hopper;
     public Lift lift;
     public DroneLauncher droneLauncher;
-    public Hang hang;
 
     @Override
     public void init() {
@@ -70,7 +69,6 @@ public class MainConfig extends RobotConfig {
         hopper = new Hopper();
         lift = new Lift();
         droneLauncher = new DroneLauncher();
-        hang = new Hang();
     }
 
     public void intake() {
@@ -80,7 +78,6 @@ public class MainConfig extends RobotConfig {
         lift.intake();
         hopper.intake();
         droneLauncher.intake();
-        hang.intake();
     }
     
     public void deposit() {
@@ -89,7 +86,6 @@ public class MainConfig extends RobotConfig {
         lift.deposit();
         hopper.deposit();
         droneLauncher.deposit();
-        hang.deposit();
     }
 
     public void transfer() {
@@ -98,6 +94,5 @@ public class MainConfig extends RobotConfig {
         lift.transfer();
         hopper.transfer();
         droneLauncher.transfer();
-        hang.transfer();
     }
 }

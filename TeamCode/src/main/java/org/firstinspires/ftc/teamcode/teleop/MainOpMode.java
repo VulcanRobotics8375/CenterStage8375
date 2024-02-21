@@ -6,14 +6,14 @@ import org.firstinspires.ftc.teamcode.robot.MainConfig;
 import org.firstinspires.ftc.teamcode.robotcorelib.opmode.OpModePipeline;
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
-import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
 
 @TeleOp(name = "MainOpMode")
 public class MainOpMode extends OpModePipeline {
     MainConfig subsystems = new MainConfig();
 
     private RobotState robotState = RobotState.INTAKE;
-    private Switch stateSwitch = new Switch();
+    private Toggle stateToggle = new Toggle();
 
     private double lastTime = 0.0;
 
@@ -30,7 +30,7 @@ public class MainOpMode extends OpModePipeline {
         switch (robotState) {
             case INTAKE:
                 subsystems.intake();
-                if(subsystems.intake.intakingComplete() || stateSwitch.simpleSwitch(gamepad1.a)) {
+                if(subsystems.intake.intakingComplete() || stateToggle.toggle(gamepad1.a)) {
                     robotState = RobotState.TRANSFER;
                     subsystems.intake.resetBreakBeam();
                 }
@@ -38,14 +38,14 @@ public class MainOpMode extends OpModePipeline {
                 break;
             case TRANSFER:
                 subsystems.transfer();
-                if (stateSwitch.simpleSwitch(gamepad1.a)) {
+                if (stateToggle.toggle(gamepad1.a)) {
                     robotState = RobotState.DEPOSIT;
                 }
                 telemetry.addData("state", "TRANSFER");
                 break;
             case DEPOSIT:
                 subsystems.deposit();
-                if (stateSwitch.simpleSwitch(gamepad1.a)) {
+                if (stateToggle.toggle(gamepad1.a)) {
                     robotState = RobotState.INTAKE;
                 }
                 telemetry.addData("state", "DEPOSIT");
