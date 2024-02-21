@@ -3,14 +3,17 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonomous.Paths;
 import org.firstinspires.ftc.teamcode.robot.MainConfig;
+import org.firstinspires.ftc.teamcode.robotcorelib.math.geometry.Vector;
 import org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils;
 import org.firstinspires.ftc.teamcode.robotcorelib.motion.followers.ParametricGuidingVectorField;
 import org.firstinspires.ftc.teamcode.robotcorelib.opmode.OpModePipeline;
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.AutoTask;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Point;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
 import org.firstinspires.ftc.teamcode.vision.apriltag.testing.Projection;
@@ -24,9 +27,14 @@ public class AutoTest extends OpModePipeline {
     MainConfig subsystems = new MainConfig();
     Projection pipeline = new Projection();
 
+
+    double foresight;
     private OpenCvWebcam camera;
 
     Pose2d robotPose;
+
+    Double[][] Colors;
+    int layer = 0;
 
     @Override
     public void init() {
@@ -42,6 +50,7 @@ public class AutoTest extends OpModePipeline {
         telemetry.addData("FPS:", camera.getFps());
         robotPose = Robot.getRobotPose();
         pipeline.updateAngles(subsystems.drivetrain.getIMU().getAngularOrientation().firstAngle / 180 * Math.PI);
+        Colors = pipeline.Colors;
         telemetry.addData("X: ", robotPose.position.x);
         telemetry.addData("Y: ", robotPose.position.y);
         telemetry.update();
@@ -63,4 +72,22 @@ public class AutoTest extends OpModePipeline {
             }
         });
     }
+
+    private Vector backboardSolver(Double[][] Colors, String pixel1, String pixel2) {
+        double mosaic = 0.0 + foresight;
+        double height = 0.0;
+        Point targetInList;
+        Vector target;
+        for (int o = 0; o < Colors.length-1; o++) {
+            for (int e = 0; e < Colors[o].length; o++) {
+                Double hex = Colors[o][e];
+                if (Colors[o][6] == null) {
+
+                }
+            }
+        }
+
+
+    }
+
 }

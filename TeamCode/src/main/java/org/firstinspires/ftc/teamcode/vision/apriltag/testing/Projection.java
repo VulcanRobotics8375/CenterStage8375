@@ -104,6 +104,7 @@ public class Projection extends AprilTagDetectionPipeline {
     }
 
     public Double[][][] Colors = new Double[12][7][5];
+    public Double[][] fullC = new Double[12][7];
 
     ArrayList<Vector3D> hexCenters = new ArrayList<Vector3D>();
 
@@ -231,7 +232,9 @@ public class Projection extends AprilTagDetectionPipeline {
                 else {
                     help = "B";
                 }
-                Imgproc.putText(input,help,p,0,1,new Scalar(255,0,0));
+                fullC[b][e] = (double) m;
+
+                        Imgproc.putText(input,help,p,0,1,new Scalar(255,0,0));
             }
         }
 
@@ -384,7 +387,7 @@ public class Projection extends AprilTagDetectionPipeline {
         return false;
     }
 
-    public Double[][][] getColors() {return Colors;}
+    public Double[][] getColors() {return fullC;}
     public void updateAngles(double pan) {
         this.pan = pan;
     }

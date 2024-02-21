@@ -19,6 +19,8 @@ public class Intake extends SubsystemState {
     DcMotorEx extendoLeft, extendoRight;
     DigitalChannel breakBeamFirst;
     DigitalChannel breakBeamSecond;
+    
+    
 
     private Toggle intakeToggle = new Toggle();
     private boolean intakePress = false;
