@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -25,6 +26,8 @@ public class AutoTest extends OpModePipeline {
 
     private OpenCvWebcam camera;
 
+    Pose2d robotPose;
+
     @Override
     public void init() {
         super.subsystems = subsystems;
@@ -35,9 +38,12 @@ public class AutoTest extends OpModePipeline {
 
     public void loop() {
         Robot.update();
-
         subsystems.intake.breakBeamTelemetry();
-        telemetry.addData();
+        telemetry.addData("FPS:", camera.getFps());
+        robotPose = Robot.getRobotPose();
+        pipeline.updateAngles(subsystems.drivetrain.getIMU().getAngularOrientation().firstAngle / 180 * Math.PI);
+        telemetry.addData("X: ", robotPose.position.x);
+        telemetry.addData("Y: ", robotPose.position.y);
         telemetry.update();
     }
     private void cameraInit() {

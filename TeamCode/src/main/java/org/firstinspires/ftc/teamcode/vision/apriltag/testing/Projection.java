@@ -103,7 +103,8 @@ public class Projection extends AprilTagDetectionPipeline {
         }
     }
 
-    Double[][][] Colors = new Double[12][7][5];
+    public Double[][][] Colors = new Double[12][7][5];
+
     ArrayList<Vector3D> hexCenters = new ArrayList<Vector3D>();
 
     @SuppressLint("DefaultLocale")
@@ -129,7 +130,7 @@ public class Projection extends AprilTagDetectionPipeline {
             }
             Orientation rot = Orientation.getOrientation(det.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS);
 
-            Double[] l = {Math.PI / 6, 0.0, (double) -rot.firstAngle + Math.PI / 2};
+            Double[] l = {Math.PI / 6, 0.0, (double) Math.PI / 2};
             p = rotate(l, p);
             AprilTagPose pose = det.pose;
 
@@ -138,28 +139,12 @@ public class Projection extends AprilTagDetectionPipeline {
 
             x += -p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
             y += Math.sin(rot.firstAngle) * distance;
-            z += Math.sin(rot.secondAngle) * distance;
-//            x += -p.get(0).getX() + pose.z;
-//            y += pose.x;
-//            z += pose.y;
-//
-
-//            if (det.center.x < SCREENX /2.0) {
-            pan -= Math.abs(rot.firstAngle);
-//            }
-//            else {
-//                pan -= Math.abs(rot.firstAngle);
-//            }
-
-
-//            tilt -= rot.secondAngle;
+//            z += Math.sin(rot.secondAngle) * distance;
             polyList.add(p);
         }
         int size = detections.size();
         if (size > 0) {
             orig = new Vector3D(x / size, y / size, z / size).subtract(initialOrig);
-            pan /= size;
-
         }
 
 
@@ -397,5 +382,10 @@ public class Projection extends AprilTagDetectionPipeline {
         }
 
         return false;
+    }
+
+    public Double[][][] getColors() {return Colors;}
+    public void updateAngles(double pan) {
+        this.pan = pan;
     }
 }
