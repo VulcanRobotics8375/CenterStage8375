@@ -23,6 +23,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.Objects;
+
 public class AutoTest extends OpModePipeline {
     MainConfig subsystems = new MainConfig();
     Projection pipeline = new Projection();
@@ -50,7 +52,7 @@ public class AutoTest extends OpModePipeline {
         telemetry.addData("FPS:", camera.getFps());
         robotPose = Robot.getRobotPose();
         pipeline.updateAngles(subsystems.drivetrain.getIMU().getAngularOrientation().firstAngle / 180 * Math.PI);
-        Colors = pipeline.Colors;
+        Colors = pipeline.getColors();
         telemetry.addData("X: ", robotPose.position.x);
         telemetry.addData("Y: ", robotPose.position.y);
         telemetry.update();
@@ -73,21 +75,27 @@ public class AutoTest extends OpModePipeline {
         });
     }
 
-    private Vector backboardSolver(Double[][] Colors, String pixel1, String pixel2) {
+    private Vector backboardSolver(String pixel1, String pixel2) {
         double mosaic = 0.0 + foresight;
         double height = 0.0;
-        Point targetInList;
+        Point targetInList = new Point(0,0);
         Vector target;
         for (int o = 0; o < Colors.length-1; o++) {
-            for (int e = 0; e < Colors[o].length; o++) {
+            for (int e = 0; e < Colors[o].length; e++) {
                 Double hex = Colors[o][e];
-                if (Colors[o][6] == null) {
 
-                }
             }
         }
 
 
+    }
+
+    private boolean isTouchingAdjacentMosaic(int o, int e) {
+        if (e == 7) {return false;}
+        if (e == 0) {return false;}
+        if (o == 12) {return false;}
+        if (o == 0) {return false;}
+        return (Objects.equals(Colors[o][e - 1], Colors[o][e+1]) || Objects.equals(Colors[o-1][e + 1], Colors[o][e]))
     }
 
 }
