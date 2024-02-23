@@ -22,6 +22,7 @@ public class Deposit extends SubsystemState {
     RevColorSensorV3 colorSensorFirst, colorSensorLast;
 
     public PID liftPID = new PID(0.025,0.0008,0.01,0.1);
+    PID xPID = new PID(0.0025,0.0,0.0,0.0), yPID = new PID(0.0025,0.0,0.0,0.0);
     private boolean liftHolding = false;
     private double minPos = 0;
     private final int LIFT_MAX_POS = 2800;
@@ -35,7 +36,6 @@ public class Deposit extends SubsystemState {
     Point target = new Point(0,0);
 
     Vector stick = new Vector(0,0);
-    PID xPID = new PID(0.0025,0.0,0.0,0.0), yPID = new PID(0.0025,0.0,0.0,0.0);
 
     public void init() {
         liftLeft = hardwareMap.get(DcMotorEx.class, "liftLeft");
@@ -67,18 +67,18 @@ public class Deposit extends SubsystemState {
                 target = new Point(target.x + 0.01*stick.x, target.y + 0.01*stick.y);
                 if (v4barIsOut()) {
                     if (fullFingers.getToggle()) {
-                    
+                        dropBoth();
+                    } else if (halfFingers.getToggle()) {
+                        dropOne();
                     }
                 }
             } else {
                 target = new Point(0, 1.5);
             }
+        } else {
+            target =  new Point(0, 0);
         }
-
-
-
-
-
+        run2Axis(target, true);
     }
 
     public void transfer() {
@@ -91,7 +91,19 @@ public class Deposit extends SubsystemState {
         halfFingers.toggle(halfFingerButton);
     }
 
-    public void home() {}
+    public boolean v4barHasClearance() { return false; }
+    public boolean v4barIsOut() { return false; }
+    public boolean liftHasClearance() { return false; }
 
-    public void testPID(PID pid) {}
+    public void home() {}
+    public void run2Axis(Point target, boolean safe) {
+
+    }
+    public void v4barOut() {}
+    public void dropBoth() {}
+    public void dropOne() {}
+
+    public void testPID(PID xPID, PID yPID, Point target) {
+
+    }
 }

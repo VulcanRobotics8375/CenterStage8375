@@ -72,7 +72,7 @@ public class Robot {
     public static <subClass> Subsystem getSubsystemFromConfig(Class<? extends Subsystem> subClass) {
         for (Subsystem subsystem : config.subsystems) {
             if(subsystem.getClass().isInstance(subClass)) {
-
+                return subsystem;
             }
         }
         return null;

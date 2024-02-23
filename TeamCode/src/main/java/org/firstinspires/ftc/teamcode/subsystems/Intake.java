@@ -23,10 +23,8 @@ public class Intake extends SubsystemState {
     
 
     private Toggle intakeToggle = new Toggle();
-    private boolean intakePress = false;
     private boolean intaking = false;
     private Toggle extendoToggle = new Toggle();
-    private boolean extendPress = false;
     private boolean extendoOut = false;
     private boolean depoTransferReady = true;
 
@@ -58,10 +56,10 @@ public class Intake extends SubsystemState {
     public void intake() {
         armDown();
         doorClose();
-        if (intakeToggle.toggle(intakePress)) {
+        if (intakeToggle.getToggle()) {
             intaking = !intaking;
             extendoOut = false;
-        } else if (extendoToggle.toggle(extendPress)) {
+        } else if (extendoToggle.getToggle()) {
             if (intaking) {
                 extendoOut = !extendoOut;
             } else {
@@ -103,8 +101,8 @@ public class Intake extends SubsystemState {
     }
 
     public void updateGamepad(boolean intake, boolean extend) {
-        this.intakePress = intake;
-        this.extendPress = extend;
+        intakeToggle.toggle(intake);
+        extendoToggle.toggle(extend);
     }
 
     public void updateSubsystems(boolean depoTransferReady) {
@@ -115,7 +113,7 @@ public class Intake extends SubsystemState {
         return v4barIsUp() && depoTransferReady;
     }
 
-    public boolean v4barIsUp() {}
+    public boolean v4barIsUp() { return false; }
 
     public void armDown() {}
     public void doorClose() {}
