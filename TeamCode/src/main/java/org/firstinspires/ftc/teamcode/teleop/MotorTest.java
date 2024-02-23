@@ -12,12 +12,10 @@ public class MotorTest extends OpMode {
     double servoPos = 0.5;
 
     public void init() {
-        servo = hardwareMap.servo.get("idk");
+        motor = hardwareMap.dcMotor.get("idk");
     }
 
     public void loop () {
-        servoPos -= 0.01*gamepad1.left_stick_y;
-        servo.setPosition(servoPos);
-        telemetry.addData("servo pos", servoPos);
+        motor.setPower(0.1*gamepad1.left_stick_y);
     }
 }

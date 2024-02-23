@@ -23,7 +23,7 @@ public class IntakeRightTest extends OpModePipeline {
     public void loop() {
         Robot.update();
 
-        subsystems.intake.testRight(-gamepad2.right_stick_y);
+//        subsystems.intake.testRight(-gamepad2.right_stick_y);
 //        subsystems.hopper.testHopperInternalServos(gamepad2.left_stick_y, gamepad2.left_stick_x);
 //        subsystems.lift.run((gamepad1.right_trigger > 0) ? gamepad1.right_trigger : -gamepad1.left_trigger);
 //        subsystems.lift.run(-gamepad2.left_stick_y, gamepad2.dpad_down, gamepad2.dpad_up);

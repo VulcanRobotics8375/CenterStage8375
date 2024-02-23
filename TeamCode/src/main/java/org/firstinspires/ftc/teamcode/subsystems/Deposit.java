@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -18,8 +19,9 @@ import org.firstinspires.ftc.teamcode.robotcorelib.util.hardware.Encoder;
 public class Deposit extends SubsystemState {
     DcMotorEx liftLeft, liftRight;
     Servo v4barLeft, v4barRight;
+    AnalogInput v4barLeftEnc, v4barRightEnc;
     Servo depoFinger;
-    RevColorSensorV3 colorSensorFirst, colorSensorLast;
+    ColorSensor colorSensorFirst, colorSensorLast;
 
     public PID liftPID = new PID(0.025,0.0008,0.01,0.1);
     PID xPID = new PID(0.0025,0.0,0.0,0.0), yPID = new PID(0.0025,0.0,0.0,0.0);
@@ -51,7 +53,15 @@ public class Deposit extends SubsystemState {
         v4barLeft = hardwareMap.servo.get("dV4barLeft");
         v4barRight = hardwareMap.servo.get("dV4barRight");
 
+        v4barLeftEnc = hardwareMap.analogInput.get("dV4BarLEnc");
+        v4barRightEnc = hardwareMap.analogInput.get("dV4BarREnc");
+
         depoFinger = hardwareMap.servo.get("depoFinger");
+
+        colorSensorFirst = hardwareMap.colorSensor.get("cSensor1");
+        colorSensorLast = hardwareMap.colorSensor.get("cSensor2");
+
+
 
         liftPID.setOutputLimits(1.0);
     }

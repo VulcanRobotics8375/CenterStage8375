@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -16,7 +15,6 @@ import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.AutoTask;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.Point;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
-import org.firstinspires.ftc.teamcode.robotcorelib.util.Switch;
 import org.firstinspires.ftc.teamcode.vision.apriltag.testing.Projection;
 import org.firstinspires.ftc.teamcode.vision.pixel.RectPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -49,13 +47,13 @@ public class AutoTest extends OpModePipeline {
 
     public void loop() {
         Robot.update();
-        subsystems.intake.breakBeamTelemetry();
+//        subsystems.intake.breakBeamTelemetry();
         telemetry.addData("FPS:", camera.getFps());
         robotPose = Robot.getRobotPose();
         pipeline.updateAngles(subsystems.drivetrain.getIMU().getAngularOrientation().firstAngle / 180 * Math.PI);
         Colors = pipeline.getColors();
-        telemetry.addData("X: ", robotPose.position.x);
-        telemetry.addData("Y: ", robotPose.position.y);
+        telemetry.addData("X: ", robotPose.getX());
+        telemetry.addData("Y: ", robotPose.getY());
         telemetry.update();
     }
     private void cameraInit() {
@@ -76,27 +74,27 @@ public class AutoTest extends OpModePipeline {
         });
     }
 
-    private Vector backboardSolver(String pixel1, String pixel2) {
-        double mosaic = 0.0 + foresight;
-        double height = 0.0;
-        Point targetInList = new Point(0,0);
-        Vector target;
-        for (int o = 0; o < Colors.length-1; o++) {
-            for (int e = 0; e < Colors[o].length; e++) {
-                Double hex = Colors[o][e];
-
-            }
-        }
-
-
-    }
-
-    private boolean isTouchingAdjacentMosaic(int o, int e) {
-        if (e == 7) {return false;}
-        if (e == 0) {return false;}
-        if (o == 12) {return false;}
-        if (o == 0) {return false;}
-        return (Objects.equals(Colors[o][e - 1], Colors[o][e+1]) || Objects.equals(Colors[o-1][e + 1], Colors[o][e]))
-    }
+//    private Vector backboardSolver(String pixel1, String pixel2) {
+//        double mosaic = 0.0 + foresight;
+//        double height = 0.0;
+//        Point targetInList = new Point(0,0);
+//        Vector target;
+//        for (int o = 0; o < Colors.length-1; o++) {
+//            for (int e = 0; e < Colors[o].length; e++) {
+//                Double hex = Colors[o][e];
+//
+//            }
+//        }
+//
+//
+//    }
+//
+//    private boolean isTouchingAdjacentMosaic(int o, int e) {
+//        if (e == 7) {return false;}
+//        if (e == 0) {return false;}
+//        if (o == 12) {return false;}
+//        if (o == 0) {return false;}
+//        return (Objects.equals(Colors[o][e - 1], Colors[o][e+1]) || Objects.equals(Colors[o-1][e + 1], Colors[o][e]))
+//    }
 
 }

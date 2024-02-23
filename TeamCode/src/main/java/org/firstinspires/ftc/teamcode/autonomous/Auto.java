@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -51,7 +52,7 @@ public class Auto extends AutoPipeline {
         subsystems.hopper.doorClose();
         subsystems.hopper.hopperDown();
 
-        subsystems.intake.armUp();
+//        subsystems.intake.armUp();
         cameraInit();
 
         while (!isStarted() && !isStopRequested())
@@ -99,8 +100,8 @@ public class Auto extends AutoPipeline {
 
         follower.followPath(paths.getSpikeMarkPath(red, backDrop, propIdx));
 
-        subsystems.intake.armUp();
-        subsystems.intake.counterRoller.setPower(-0.7);
+//        subsystems.intake.armUp();
+//        subsystems.intake.counterRoller.setPower(-0.7);
         timer.reset();
         runTask(new AutoTask() {
             @Override

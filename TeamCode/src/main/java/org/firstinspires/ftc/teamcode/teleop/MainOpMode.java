@@ -30,10 +30,10 @@ public class MainOpMode extends OpModePipeline {
         switch (robotState) {
             case INTAKE:
                 subsystems.intake();
-                if(subsystems.intake.intakingComplete() || stateToggle.toggle(gamepad1.a)) {
-                    robotState = RobotState.TRANSFER;
-                    subsystems.intake.resetBreakBeam();
-                }
+//                if(subsystems.intake.intakingComplete() || stateToggle.toggle(gamepad1.a)) {
+//                    robotState = RobotState.TRANSFER;
+//                    subsystems.intake.resetBreakBeam();
+//                }
                 telemetry.addData("state", "INTAKE");
                 break;
             case TRANSFER:

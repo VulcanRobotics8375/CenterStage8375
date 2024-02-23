@@ -115,8 +115,8 @@ public class Projection extends AprilTagDetectionPipeline {
         x = 0;
         y = 0;
         z = 0;
-        pan = 0;
-        tilt = 0;
+//        pan = 0;
+//        tilt = 0;
         AprilTag(input);
         ArrayList<ArrayList<Vector3D>> polyList = new ArrayList<>();
 
@@ -138,8 +138,8 @@ public class Projection extends AprilTagDetectionPipeline {
             double distance = Math.sqrt(Math.pow(pose.z * FEET_PER_METER, 2) + Math.pow(pose.x * FEET_PER_METER, 2) + Math.pow(pose.y * FEET_PER_METER, 2));
 
 
-            x += -p.get(0).getX() + Math.cos(rot.firstAngle) * distance;
-            y += Math.sin(rot.firstAngle) * distance;
+            x += -p.get(0).getX() + Math.cos(pan) * distance;
+            y += Math.sin(pan) * distance;
 //            z += Math.sin(rot.secondAngle) * distance;
             polyList.add(p);
         }

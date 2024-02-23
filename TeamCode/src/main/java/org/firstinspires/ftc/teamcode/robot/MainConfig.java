@@ -73,7 +73,7 @@ public class MainConfig extends RobotConfig {
 
     public void intake() {
         drivetrain.intake();
-        intake.updateHopperLift(true, lift.intakeReady());
+//        intake.updateHopperLift(true, lift.intakeReady());
         intake.intake();
         lift.intake();
         hopper.intake();

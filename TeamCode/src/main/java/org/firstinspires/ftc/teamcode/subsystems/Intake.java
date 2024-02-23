@@ -32,8 +32,8 @@ public class Intake extends SubsystemState {
         intake1 = hardwareMap.crservo.get("intake1");
         intake2 = hardwareMap.crservo.get("intake2");
         arm = hardwareMap.servo.get("intakeArm");
-        v4barLeft = hardwareMap.servo.get("v4barLeft");
-        v4barRight = hardwareMap.servo.get("v4barRight");
+        v4barLeft = hardwareMap.servo.get("iV4barLeft");
+        v4barRight = hardwareMap.servo.get("iV4barRight");
         v4barLeftEnc = hardwareMap.get(AnalogInput.class, "v4barLeftEnc");
         v4barRightEnc = hardwareMap.get(AnalogInput.class, "v4barRightEnc");
         door = hardwareMap.servo.get("door");
