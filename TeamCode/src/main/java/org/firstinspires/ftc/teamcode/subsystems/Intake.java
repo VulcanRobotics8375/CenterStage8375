@@ -27,6 +27,10 @@ public class Intake extends SubsystemState {
     private Toggle extendoToggle = new Toggle();
     private boolean extendoOut = false;
     private boolean depoTransferReady = true;
+    private final double LV4BOPEN = 0;
+    private final double LV4BARCLOSE = 0;
+    private final double RV4BOPEN = 0;
+    private final double RV4BARCLOSE = 0;
 
     public void init() {
         intake1 = hardwareMap.crservo.get("intake1");
@@ -127,7 +131,7 @@ public class Intake extends SubsystemState {
     public void doorOpen() {
         door.setPosition(0.1528);
     }
-    public void v4barDown() {}
+    public void v4barDown() {v4barLeft.setPosition(LV4BARCLOSE);}
     public void v4barHover() {}
     public void v4barUp() {}
     public void runIntake() {
@@ -142,6 +146,7 @@ public class Intake extends SubsystemState {
         intake1.setPower(0.1);
         intake2.setPower(0.1);
     }
+
     public void extendoIn() {}
     public void extendoOut() {}
 }
