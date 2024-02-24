@@ -99,7 +99,7 @@ public class PixelOpMode extends AutoPipeline {
             pipeline.Rc = Rc;
             pipeline.Rd = Rd;
             
-            subsystems.droneLauncher.launcherUp();
+//            subsystems.droneLauncher.launcherUp();
             telemetry.addData("count", pipeline.getFinalcount());
 
             telemetry.update();

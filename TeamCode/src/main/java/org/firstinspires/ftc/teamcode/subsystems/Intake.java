@@ -115,15 +115,33 @@ public class Intake extends SubsystemState {
 
     public boolean v4barIsUp() { return false; }
 
-    public void armDown() {}
-    public void doorClose() {}
-    public void doorOpen() {}
+    public void armDown() {
+        arm.setPosition(0.302);
+    }
+    public void armUp() {
+        arm.setPosition(0.99);
+    }
+    public void doorClose() {
+        door.setPosition(0.282);
+    }
+    public void doorOpen() {
+        door.setPosition(0.1528);
+    }
     public void v4barDown() {}
     public void v4barHover() {}
     public void v4barUp() {}
-    public void runIntake() {}
-    public void stopIntake() {}
-    public void holdIntake() {}
+    public void runIntake() {
+        intake1.setPower(-1);
+        intake2.setPower(1);
+    }
+    public void stopIntake() {
+        intake1.setPower(0);
+        intake2.setPower(0);
+    }
+    public void holdIntake() {
+        intake1.setPower(0.1);
+        intake2.setPower(0.1);
+    }
     public void extendoIn() {}
     public void extendoOut() {}
 }

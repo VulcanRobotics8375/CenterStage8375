@@ -8,18 +8,18 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class BluePipelineForRight extends OpenCvPipeline {
+public class BluePipeline extends OpenCvPipeline {
 
     Telemetry telemetry;
 
-    public BluePipelineForRight(Telemetry t) {
+    public BluePipeline(Telemetry t) {
         telemetry = t;
     } // constructor for the class to set up telemetry
 
     Mat mat = new Mat(); // declare a new matrix (computer representation of an image)
-    Rect leftRect = new Rect(140, 270, 200, 100); // define our regions of interest (where the algorithm is focusing on) as rectangles
+    Rect leftRect = new Rect(190, 270, 200, 100); // define our regions of interest (where the algorithm is focusing on) as rectangles
     Rect midRect = new Rect(570, 260, 530, 100);
-    //    Rect rightRect = new Rect(1080, 230, 200, 117);
+//    Rect rightRect = new Rect(1080, 230, 200, 117);
     final double PERCENT_THRESHOLD = 0.19; // define our threshold
     private int finalAnswer;
     Scalar blue = new Scalar(0, 0, 255); // define what the color of the rectangle outline is that appears on the output (blue)
@@ -76,66 +76,6 @@ public class BluePipelineForRight extends OpenCvPipeline {
             telemetry.addData("Location", "Right");
             Imgproc.rectangle(mat, new Rect(100, 100, 50, 50), new Scalar(0, 255, 0), 2);
         }
-
-//        if (leftValue < PERCENT_THRESHOLD && midValue < PERCENT_THRESHOLD && rightValue < PERCENT_THRESHOLD) {
-//            finalAnswer = 0;
-//        } else {
-//            if (leftValue > midValue && leftValue > rightValue) {
-//                finalAnswer = 1;
-//            } else if (midValue > leftValue && midValue > rightValue) {
-//                finalAnswer = 2;
-//            } else if (rightValue > leftValue && rightValue > midValue) {
-//                finalAnswer = 3;
-//            } else if (leftValue == midValue && leftValue == rightValue && midValue == rightValue) {
-//                finalAnswer = 4;
-//            } else {
-//                finalAnswer = 5;
-//            }
-//        }
-
-//        if (finalAnswer == 0) {
-//            telemetry.addData("Position", "None of the values are above the percent threshold (please do more testing) - PROCEEDING WITH CAUTION ");
-//            if (leftValue > midValue && leftValue > rightValue) {
-//                telemetry.addData("Position", "left lol");
-//                location = Location.LEFT;
-//                Imgproc.rectangle(mat, leftRect, new Scalar(0, 255, 0), 2); // change the rectangle of the detected position to green
-//            } else if (midValue > leftValue && midValue > rightValue) {
-//                telemetry.addData("Position", "middle meh");
-//                location = Location.MIDDLE;
-//                Imgproc.rectangle(mat, midRect, new Scalar(0, 255, 0), 2);
-//            } else if (rightValue > leftValue && rightValue > midValue) {
-//                telemetry.addData("Position", "right rawr xD");
-//                location = Location.RIGHT;
-//                Imgproc.rectangle(mat, rightRect, new Scalar(0, 255, 0), 2);
-//            }
-//
-//        } else if (finalAnswer == 1) {
-//
-//            telemetry.addData("Position", "left lol");
-//            location = Location.LEFT;
-//            Imgproc.rectangle(mat, leftRect, new Scalar(0, 255, 0), 2); // change the rectangle of the detected position to green
-//
-//        } else if (finalAnswer == 3) {
-//
-//            telemetry.addData("Position", "right rawr xD");
-//            location = Location.RIGHT;
-//            Imgproc.rectangle(mat, rightRect, new Scalar(0, 255, 0), 2);
-//
-//        } else if (finalAnswer == 2) {
-//
-//            telemetry.addData("Position", "middle meh");
-//            location = Location.MIDDLE;
-//            Imgproc.rectangle(mat, midRect, new Scalar(0, 255, 0), 2);
-//
-//        } else if (finalAnswer == 4) {
-//
-//            telemetry.addData("Debugging", "HOW TF DO THEY ALL EQUAL THE SAME");
-//        } else if (finalAnswer == 5) {
-//
-//            telemetry.addData("Debugging", "Rethink and double check EVERYTHING");
-//        }
-//        telemetry.update();
-
 
         return mat;
     }

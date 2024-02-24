@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.checkerframework.checker.units.qual.C;
@@ -24,6 +25,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.Objects;
 
+@TeleOp
 public class AutoTest extends OpModePipeline {
     MainConfig subsystems = new MainConfig();
     Projection pipeline = new Projection();

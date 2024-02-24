@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.RobotConfig;
+import org.firstinspires.ftc.teamcode.subsystems.Deposit;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.subsystems.DroneLauncher;
-import org.firstinspires.ftc.teamcode.subsystems.Hang;
 import org.firstinspires.ftc.teamcode.subsystems.Hopper;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 /*
 Control Hub
@@ -58,8 +56,7 @@ public class MainConfig extends RobotConfig {
     public Drivetrain drivetrain;
     public Intake intake;
     public Hopper hopper;
-    public Lift lift;
-    public DroneLauncher droneLauncher;
+    public Deposit lift;
 
     @Override
     public void init() {
@@ -67,8 +64,8 @@ public class MainConfig extends RobotConfig {
         drivetrain = new Drivetrain();
         intake = new Intake();
         hopper = new Hopper();
-        lift = new Lift();
-        droneLauncher = new DroneLauncher();
+        lift = new Deposit();
+//        droneLauncher = new DroneLauncher();
     }
 
     public void intake() {
@@ -77,7 +74,7 @@ public class MainConfig extends RobotConfig {
         intake.intake();
         lift.intake();
         hopper.intake();
-        droneLauncher.intake();
+//        droneLauncher.intake();
     }
     
     public void deposit() {
@@ -85,7 +82,7 @@ public class MainConfig extends RobotConfig {
         intake.deposit();
         lift.deposit();
         hopper.deposit();
-        droneLauncher.deposit();
+//        droneLauncher.deposit();
     }
 
     public void transfer() {
@@ -93,6 +90,6 @@ public class MainConfig extends RobotConfig {
         intake.transfer();
         lift.transfer();
         hopper.transfer();
-        droneLauncher.transfer();
+//        droneLauncher.transfer();
     }
 }

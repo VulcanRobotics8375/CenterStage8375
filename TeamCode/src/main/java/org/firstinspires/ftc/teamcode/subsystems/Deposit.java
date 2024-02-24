@@ -77,7 +77,7 @@ public class Deposit extends SubsystemState {
                 target = new Point(target.x + 0.01*stick.x, target.y + 0.01*stick.y);
                 if (v4barIsOut()) {
                     if (fullFingers.getToggle()) {
-                        dropBoth();
+                        fingerOpen();
                     } else if (halfFingers.getToggle()) {
                         dropOne();
                     }
@@ -88,7 +88,7 @@ public class Deposit extends SubsystemState {
         } else {
             target =  new Point(0, 0);
         }
-        run2Axis(target, true);
+        run2Axis(target);
     }
 
     public void transfer() {
@@ -106,12 +106,31 @@ public class Deposit extends SubsystemState {
     public boolean liftHasClearance() { return false; }
 
     public void home() {}
-    public void run2Axis(Point target, boolean safe) {
+    public void run2Axis(Point target) {
+        double y = (liftLeft.getCurrentPosition() + liftRight.getCurrentPosition())/2.0;
+        double x = (liftLeft.getCurrentPosition() - liftRight.getCurrentPosition())/2.0;
+        double My = target.y;
+        double Mx = target.x;
+        if (target.y < 1 && Math.abs(x) > 1) {
+            Mx = 0;
+            My = y;
+        }
+        liftLeft.setTargetPosition((int) (yPID.getOutput(y,My) + xPID.getOutput(x,Mx)));
+        liftRight.setTargetPosition((int) (yPID.getOutput(y,My) - xPID.getOutput(x,Mx)));
+
 
     }
     public void v4barOut() {}
-    public void dropBoth() {}
-    public void dropOne() {}
+    public void fingerOpen() {
+        depoFinger.setPosition(0.927);
+    }
+    public void fingerClose() {
+        depoFinger.setPosition(0.7836);
+    }
+    public void dropOne() {
+        depoFinger.setPosition(0.825);
+    }
+
 
     public void testPID(PID xPID, PID yPID, Point target) {
 

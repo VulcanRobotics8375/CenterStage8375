@@ -34,7 +34,7 @@ public class LiftPIDTest extends OpModePipeline {
 
         xPID.setPID(xP, xI, xD, xf);
 
-        subsystems.lift.testPID(xPID);
+//        subsystems.lift.testPID(xPID);
         telemetry.addData("P", xP);
         telemetry.addData("D", xI);
         telemetry.addData("D", xD);

@@ -79,7 +79,7 @@ public class Auto extends AutoPipeline {
 
         Robot.setRobotPose(new Pose2d());
 
-        subsystems.droneLauncher.launcherUp();
+//        subsystems.droneLauncher.launcherUp();
         subsystems.intake.armDown();
         timer.reset();
         runTask(new AutoTask() {
@@ -96,7 +96,7 @@ public class Auto extends AutoPipeline {
         });
         camera.stopStreaming();
         int propIdx = pipeline.getPropIdx();
-        subsystems.droneLauncher.launcherDown();
+//        subsystems.droneLauncher.launcherDown();
 
         follower.followPath(paths.getSpikeMarkPath(red, backDrop, propIdx));
 
@@ -121,7 +121,7 @@ public class Auto extends AutoPipeline {
         while(!follower.atEnd && !hardStop && !isStopRequested()) {
             follower.update();
             if(follower.distanceFromEnd < 40) {
-                subsystems.lift.runToFirstPixel();
+//                subsystems.lift.runToFirstPixel();
                 subsystems.hopper.hopperUp();
                 if (Robot.getRobotPose().vec().distTo(new Vector2d(follower.xSpline.value(1.0), follower.ySpline.value(1.0))) < 1.0 && Robot.getRobotVelocity().vec().norm() < 0.2) {
                     hardStop = true;
