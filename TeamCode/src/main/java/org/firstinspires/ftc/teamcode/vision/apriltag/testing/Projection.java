@@ -242,8 +242,10 @@ public class Projection extends AprilTagDetectionPipeline {
         return input;
     }
 
-    public ArrayList<Point> projection2(Vector3D orig, Iterable<Vector3D> pointList) {
+    public ArrayList<Point> projection2(Vector3D orig, ArrayList<Vector3D> pointList) {
         ArrayList<Point> points = new ArrayList<>();
+        if (pointList.size() == 0 || pointList == null) {return points;}
+
         double cp = Math.cos(pan);
         double sp = Math.sin(pan);
         double ct = Math.cos(tilt);

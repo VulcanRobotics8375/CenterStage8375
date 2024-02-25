@@ -29,10 +29,11 @@ import java.util.Objects;
 
 @TeleOp
 public class AutoTest extends OpModePipeline {
-    DrivetrainConfig subsystems = new DrivetrainConfig();
+//    DrivetrainConfig subsystems = new DrivetrainConfig();
+
     Projection pipeline = new Projection();
 
-
+    private BNO055IMU imu;
     double foresight;
     private OpenCvWebcam camera;
 
@@ -43,11 +44,18 @@ public class AutoTest extends OpModePipeline {
 
     @Override
     public void init() {
-        super.subsystems = subsystems;
+//        super.subsystems = subsystems;
         runMode = RobotRunMode.TELEOP;
         super.init();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+        imu.initialize(parameters);
         cameraInit();
-        subsystems.drivetrain.init();
+//        subsystems.drivetrain.init();
 
     }
 
@@ -56,10 +64,10 @@ public class AutoTest extends OpModePipeline {
 //        subsystems.intake.breakBeamTelemetry();
         telemetry.addData("FPS:", camera.getFps());
         robotPose = Robot.getRobotPose();
-        pipeline.updateAngles(subsystems.drivetrain.getIMU().getAngularOrientation().firstAngle);
-        Colors = pipeline.getColors();
-        telemetry.addData("X: ", robotPose.getX());
-        telemetry.addData("Y: ", robotPose.getY());
+        pipeline.updateAngles(imu.getAngularOrientation().firstAngle);
+//        Colors = pipeline.getColors();
+//        telemetry.addData("X: ", robotPose.getX());
+//        telemetry.addData("Y: ", robotPose.getY());
         telemetry.update();
     }
     private void cameraInit() {
