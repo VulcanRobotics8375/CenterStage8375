@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -46,6 +47,8 @@ public class AutoTest extends OpModePipeline {
         runMode = RobotRunMode.TELEOP;
         super.init();
         cameraInit();
+        subsystems.drivetrain.init();
+
     }
 
     public void loop() {
@@ -53,7 +56,7 @@ public class AutoTest extends OpModePipeline {
 //        subsystems.intake.breakBeamTelemetry();
         telemetry.addData("FPS:", camera.getFps());
         robotPose = Robot.getRobotPose();
-        pipeline.updateAngles(subsystems.drivetrain.getIMU().getAngularOrientation().firstAngle / 180 * Math.PI);
+        pipeline.updateAngles(subsystems.drivetrain.getIMU().getAngularOrientation().firstAngle);
         Colors = pipeline.getColors();
         telemetry.addData("X: ", robotPose.getX());
         telemetry.addData("Y: ", robotPose.getY());

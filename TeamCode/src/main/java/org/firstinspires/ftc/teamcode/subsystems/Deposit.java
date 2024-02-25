@@ -94,6 +94,15 @@ public class Deposit extends SubsystemState {
     public void transfer() {
         home();
     }
+    public void home() {
+        run2Axis(new Point(0,0));
+        if (liftInMiddle()) {
+                v4barIn();
+                fingerClose();
+        } else {
+            v4barOut();
+        }
+    }
 
     public void updateGamepad(double stickX, double stickY, boolean fullFingerButton, boolean halfFingerButton) {
         stick = new Vector(stickX, stickY);
@@ -105,7 +114,11 @@ public class Deposit extends SubsystemState {
     public boolean v4barIsOut() { return false; }
     public boolean liftHasClearance() { return false; }
 
-    public void home() {}
+    public boolean liftInMiddle(){
+        double middle = (liftLeft.getCurrentPosition() - liftRight.getCurrentPosition())/2.0;
+        return (Math.abs(middle)<1);
+    }
+
     public void run2Axis(Point target) {
         double y = (liftLeft.getCurrentPosition() + liftRight.getCurrentPosition())/2.0;
         double x = (liftLeft.getCurrentPosition() - liftRight.getCurrentPosition())/2.0;
@@ -120,7 +133,14 @@ public class Deposit extends SubsystemState {
 
 
     }
-    public void v4barOut() {}
+    public void v4barOut() {
+        v4barLeft.setPosition(0.0);
+        v4barRight.setPosition(0.0);
+    }
+    public void v4barIn() {
+        v4barLeft.setPosition(0.0);
+        v4barRight.setPosition(0.0);
+    }
     public void fingerOpen() {
         depoFinger.setPosition(0.927);
     }
@@ -130,9 +150,5 @@ public class Deposit extends SubsystemState {
     public void dropOne() {
         depoFinger.setPosition(0.825);
     }
-
-
-    public void testPID(PID xPID, PID yPID, Point target) {
-
-    }
+    public void testPID(PID xPID, PID yPID, Point target) { }
 }
