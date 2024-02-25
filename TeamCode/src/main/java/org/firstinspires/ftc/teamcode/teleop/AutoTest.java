@@ -23,6 +23,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class AutoTest extends OpModePipeline {
@@ -35,7 +37,7 @@ public class AutoTest extends OpModePipeline {
 
     Pose2d robotPose;
 
-    Double[][] Colors;
+    String[][] Colors;
     int layer = 0;
 
     @Override
@@ -48,7 +50,7 @@ public class AutoTest extends OpModePipeline {
 
     public void loop() {
         Robot.update();
-        subsystems.intake.breakBeamTelemetry();
+//        subsystems.intake.breakBeamTelemetry();
         telemetry.addData("FPS:", camera.getFps());
         robotPose = Robot.getRobotPose();
         pipeline.updateAngles(subsystems.drivetrain.getIMU().getAngularOrientation().firstAngle / 180 * Math.PI);
@@ -75,27 +77,56 @@ public class AutoTest extends OpModePipeline {
         });
     }
 
-    private Vector backboardSolver(String pixel1, String pixel2) {
-        double mosaic = 0.0 + foresight;
-        double height = 0.0;
-        Point targetInList = new Point(0,0);
-        Vector target;
-        for (int o = 0; o < Colors.length-1; o++) {
-            for (int e = 0; e < Colors[o].length; e++) {
-                Double hex = Colors[o][e];
+//    private Vector backboardSolver(String pixel) {
+//        double mosaic = 0.0 - foresight;
+//        double height = 0.0;
+//        ArrayList<Point> mosaicInList = new ArrayList<>();
+//        ArrayList<Point> heightInList = new ArrayList<>();
+//        Vector target;
+//        for (int o = 0; o < Colors.length-1; o++) {
+//            for (int e = 0; e < Colors[o].length; e++) {
+//                String hex = Colors[o][e];
+//                Point mosaicPotential = isTouchingAdjacentMosaic(o,e);
+//                if (mosaicPotential!=null) {
+//                    if (Objects.equals(Colors[(int) mosaicPotential.y][(int) mosaicPotential.x], pixel)) {
+//                        mosaicInList.add(mosaicPotential);
+//                    }
+//                }
+//                height = (!Objects.equals(hex, "B"))? o / 12.0 :  height;
+//            }
+//        }
+//
+//
+//    }
 
-            }
-        }
-
-
-    }
-
-    private boolean isTouchingAdjacentMosaic(int o, int e) {
-        if (e == 7) {return false;}
-        if (e == 0) {return false;}
-        if (o == 12) {return false;}
-        if (o == 0) {return false;}
-        return (Objects.equals(Colors[o][e - 1], Colors[o][e+1]) || Objects.equals(Colors[o-1][e + 1], Colors[o][e]))
-    }
+//    private Point isTouchingAdjacentMosaic(int o, int e) {
+//        if (e == 7) {return null;}
+//        if (e == 0) {return null;}
+//        if (o == 12) {return null;}
+//        if (o == 0) {return null;}
+//        if (Colors[o][6] == null) {
+//            if (Objects.equals(Colors[o][e - 1], Colors[o - 1][e])) {
+//                return new Point(o,e-1);
+//            }
+//            else if (Objects.equals(Colors[o][e + 1], Colors[o-1][e+1])) {
+//                return new Point(o,e+1);
+//            }
+//            else if (Objects.equals(Colors[o-1][e], Colors[o-1][e+1])) {
+//                return new Point(o-1,e);
+//            }
+//        }
+//        else {
+//            if (Objects.equals(Colors[o][e - 1], Colors[o - 1][e-1])) {
+//                return new Point(o,e-1);
+//            }
+//            else if (Objects.equals(Colors[o][e + 1], Colors[o-1][e+1])) {
+//                return new Point(o,e+1);
+//            }
+//            else if (Objects.equals(Colors[o-1][e], Colors[o-1][e-1])) {
+//                return new Point(o-1,e);
+//            }
+//        }
+//        return null;
+//    }
 
 }

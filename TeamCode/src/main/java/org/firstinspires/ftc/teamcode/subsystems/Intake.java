@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -30,6 +31,8 @@ public class Intake extends SubsystemState {
     private boolean extendoOut = false;
     private boolean depoTransferReady = true;
 
+    ColorSensor firstColor, secondColor;
+
     public void init() {
         intake1 = hardwareMap.crservo.get("intake1");
         intake2 = hardwareMap.crservo.get("intake2");
@@ -41,6 +44,9 @@ public class Intake extends SubsystemState {
         door = hardwareMap.servo.get("door");
         extendoLeft = hardwareMap.get(DcMotorEx.class, "extendoLeft");
         extendoRight = hardwareMap.get(DcMotorEx.class, "extendoRight");
+
+        firstColor = hardwareMap.colorSensor.get("Color1");
+        secondColor = hardwareMap.colorSensor.get("Color2");
 
         extendoLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendoLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

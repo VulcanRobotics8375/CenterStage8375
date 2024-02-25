@@ -45,13 +45,7 @@ public class Auto extends AutoPipeline {
         runMode = RobotRunMode.AUTONOMOUS;
         robotInit();
 
-        subsystems.lift.liftPID.setSampleTime(60);
-        subsystems.lift.liftPID.setP(0.01);
-        subsystems.lift.liftPID.setI(0.0004);
-        subsystems.hopper.doorClose();
-        subsystems.hopper.hopperDown();
 
-        subsystems.intake.armUp();
         cameraInit();
 
         while (!isStarted() && !isStopRequested())
