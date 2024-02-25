@@ -26,6 +26,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @TeleOp
@@ -40,7 +42,7 @@ public class AutoTest extends OpModePipeline {
 
     Pose2d robotPose;
 
-    Double[][] Colors;
+    String[][] Colors;
     int layer = 0;
 
     @Override

@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.vision.apriltag;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Rotation2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -65,11 +68,13 @@ public class AprilTagLight extends AprilTagDetectionPipeline {
     final double PERCENT_THRESHOLD = 0.19; // define our threshold
 
 
+    public boolean red = false;
+
+
 
     // UNITS ARE METERS
     double tagsize;
 
-    Pose2d pose = new Pose2d();
     public void AprilTag(Mat input) {
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
         ArrayList<AprilTagDetection> prevD = detections;
@@ -94,13 +99,37 @@ public class AprilTagLight extends AprilTagDetectionPipeline {
     }
 
     private double AprilTagYValues(int id) {
-        switch (id) {
-            case 1 : return 0.0;
-            case 2 : return 0.0;
-            case 3 : return 0.0;
-            case 4 : return 0.0;
-            case 5 : return 0.0;
-            case 6 : return 0.0;
+        if (red) {
+            switch (id) {
+                case 1:
+                    return 0.0;
+                case 2:
+                    return 0.0;
+                case 3:
+                    return 0.0;
+                case 4:
+                    return 0.0;
+                case 5:
+                    return 0.0;
+                case 6:
+                    return 0.0;
+            }
+        }
+        else {
+            switch (id) {
+                case 1:
+                    return 0.0;
+                case 2:
+                    return 0.0;
+                case 3:
+                    return 0.0;
+                case 4:
+                    return 0.0;
+                case 5:
+                    return 0.0;
+                case 6:
+                    return 0.0;
+            }
         }
         return 0.0;
     }
@@ -117,7 +146,7 @@ public class AprilTagLight extends AprilTagDetectionPipeline {
         }
         x /= detections.size();
         y /= detections.size();
-        return new Pose2d(x,y);
+        return new Pose2d(new Vector2d(x,y),0);
     }
     public int getProp(Scalar lowBound, Scalar highBound) {
         Imgproc.cvtColor(mat, hsvColor, Imgproc.COLOR_RGB2HSV); // change the color space from rgb to HSV (Hue, Saturation, Value)
