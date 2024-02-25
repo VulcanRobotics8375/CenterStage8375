@@ -17,7 +17,7 @@ public class ServoTest extends OpMode {
     // left: 0.575, right:394
 
     public void init() {
-        servo = hardwareMap.servo.get("1");
+        servo = hardwareMap.servo.get("dV4barRight");
 //        servo1 = hardwareMap.servo.get("dV4barRight");
 //        v4barLeftEnc = hardwareMap.analogInput.get("dV4BarLEnc");
     }
@@ -25,7 +25,7 @@ public class ServoTest extends OpMode {
     public void loop () {
         servoPos = Range.clip(servoPos - 0.01*gamepad1.left_stick_y, 0.01, 0.99);
         servo.setPosition(servoPos);
-        telemetry.addData("servo pos", servoPos);
+        telemetry.addData("servo right pos", servoPos);
 
 //        servo1Pos = Range.clip(servo1Pos + 0.01*gamepad1.right_stick_y, 0.01, 0.99);
 //        servo1.setPosition(servo1Pos);

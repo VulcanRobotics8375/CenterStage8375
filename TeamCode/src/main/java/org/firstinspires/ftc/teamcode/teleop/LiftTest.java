@@ -27,6 +27,5 @@ public class LiftTest extends OpMode {
 
         liftRight.setPower(-gamepad1.left_stick_y + gamepad1.left_stick_x / 3.0);
         telemetry.addData("lift right", liftRight.getCurrentPosition());
-
     }
 }
