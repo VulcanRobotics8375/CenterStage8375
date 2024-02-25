@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
 
 
 public class DroneLauncher extends SubsystemState {
-    public ServoImplEx lifter, trigger;
+    public ServoImplEx trigger;
 
     private final double LAUNCHER_UP = 0.49;
     private final double LAUNCHER_DOWN = 0.074;
@@ -22,10 +22,8 @@ public class DroneLauncher extends SubsystemState {
     private Toggle triggerToggle = new Toggle();
 
     public void init() {
-        lifter = hardwareMap.get(ServoImplEx.class, "launch_lift");
         trigger = hardwareMap.get(ServoImplEx.class, "launch_trigger");
         PwmControl.PwmRange range = new PwmControl.PwmRange(500, 2500);
-        lifter.setPwmRange(range);
         trigger.setPwmRange(range);
     }
 
@@ -38,14 +36,13 @@ public class DroneLauncher extends SubsystemState {
                 triggerPos = TRIGGER_RELEASED;
             }
         }
-        lifter.setPosition(launcherPos);
         trigger.setPosition(triggerPos);
     }
 
     public void controlAngle(double stick) {
         launcherPos = Range.clip(launcherPos + stick*0.01, 0.0, 1.0);
 
-        lifter.setPosition(launcherPos);
+        trigger.setPosition(launcherPos);
 
         telemetry.addData("launcher pos", launcherPos);
     }
@@ -75,9 +72,9 @@ public class DroneLauncher extends SubsystemState {
     }
 
     public void launcherUp() {
-        lifter.setPosition(LAUNCHER_UP);
+        trigger.setPosition(LAUNCHER_UP);
     }
     public void launcherDown() {
-        lifter.setPosition(LAUNCHER_DOWN);
+        trigger.setPosition(LAUNCHER_DOWN);
     }
 }

@@ -13,27 +13,32 @@ import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
 @TeleOp(name = "LiftPIDTest")
 public class LiftPIDTest extends OpModePipeline {
     MainConfig subsystems = new MainConfig();
-    public static double P = 0.025, I=0.0008, D=0.01, f=0.1;
-    PID miniPID = new PID(P, I, D, f);
+
+    public static double xP = 0.0025, xI = 0.0, xD = 0.0, xf = 0.0;
+    PID xPID = new PID(xP, xI, xD, xf);
+
+    public static double yP = 0.0025, yI = 0.0, yD = 0.0, yf = 0.0;
+    PID yPID = new PID(yP, yI, yD, yf);
 
     @Override
     public void init() {
         super.subsystems = subsystems;
         runMode = RobotRunMode.TELEOP;
-        miniPID.setOutputLimits(1.0);
+        xPID.setOutputLimits(1.0);
+        yPID.setOutputLimits(1.0);
         super.init();
     }
 
     public void loop() {
         Robot.update();
 
-        miniPID.setPID(P, I, D, f);
+        xPID.setPID(xP, xI, xD, xf);
 
-        subsystems.lift.testPID(miniPID);
-        telemetry.addData("P", P);
-        telemetry.addData("D", I);
-        telemetry.addData("D", D);
-        telemetry.addData("f", f);
+//        subsystems.lift.testPID(xPID);
+        telemetry.addData("P", xP);
+        telemetry.addData("D", xI);
+        telemetry.addData("D", xD);
+        telemetry.addData("f", xf);
 
         telemetry.update();
     }

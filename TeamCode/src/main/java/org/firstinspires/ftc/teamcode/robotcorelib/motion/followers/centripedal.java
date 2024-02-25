@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robotcorelib.math.geometry.Vector;
 
 public class centripedal {
 
-    ElaspedTime time = new ElapsedTime();
+    ElapsedTime time = new ElapsedTime();
     Pose2d previous = new Pose2d(0,0);
     Double lastDerivative = 0.0;
 

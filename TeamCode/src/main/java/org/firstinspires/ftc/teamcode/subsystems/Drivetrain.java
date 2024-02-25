@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils.j
 import static org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils.shouldHardwareUpdate;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -25,9 +26,8 @@ public class Drivetrain extends SubsystemState implements DrivetrainImpl {
     private BNO055IMU imu;
     public static final DriveMode driveMode = DriveMode.MECANUM;
     public static final DrivetrainVelocityMode velocityMode = DrivetrainVelocityMode.FEEDFORWARD;
-    
+
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-    
     private Toggle transferToggle = new Toggle();
     private Toggle depoToggle = new Toggle();
 
@@ -56,7 +56,7 @@ public class Drivetrain extends SubsystemState implements DrivetrainImpl {
 
         //set up IMU
         parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled = false;
         imu.initialize(parameters);

@@ -28,7 +28,7 @@ public class BreakBeamTest extends OpModePipeline {
     public void loop() {
         Robot.update();
 
-        subsystems.intake.breakBeamTelemetry();
+//        subsystems.intake.breakBeamTelemetry();
 
         telemetry.update();
     }

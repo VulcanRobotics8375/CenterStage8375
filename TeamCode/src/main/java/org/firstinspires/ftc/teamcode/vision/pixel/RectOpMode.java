@@ -65,7 +65,7 @@ public class RectOpMode extends AutoPipeline {
 
         while (!isStarted() && !isStopRequested())
         {
-            subsystems.droneLauncher.launcherUp();
+//            subsystems.droneLauncher.launcherUp();
             telemetry.addData("Left count", pipeline.lCount);
             telemetry.addData("Right count", pipeline.rCount);
             telemetry.addData("Center count", pipeline.cCount);
