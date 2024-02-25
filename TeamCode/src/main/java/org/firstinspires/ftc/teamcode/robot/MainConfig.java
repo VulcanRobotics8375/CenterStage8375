@@ -55,16 +55,14 @@ Servos
 public class MainConfig extends RobotConfig {
     public Drivetrain drivetrain;
     public Intake intake;
-    public Hopper hopper;
-    public Deposit lift;
+    public Deposit deposit;
 
     @Override
     public void init() {
         subsystems.clear();
         drivetrain = new Drivetrain();
         intake = new Intake();
-        hopper = new Hopper();
-        lift = new Deposit();
+        deposit = new Deposit();
 //        droneLauncher = new DroneLauncher();
     }
 
@@ -72,24 +70,21 @@ public class MainConfig extends RobotConfig {
         drivetrain.intake();
 //        intake.updateHopperLift(true, lift.intakeReady());
         intake.intake();
-        lift.intake();
-        hopper.intake();
+        deposit.intake();
 //        droneLauncher.intake();
     }
     
     public void deposit() {
         drivetrain.deposit();
         intake.deposit();
-        lift.deposit();
-        hopper.deposit();
+        deposit.intake();
 //        droneLauncher.deposit();
     }
 
     public void transfer() {
         drivetrain.transfer();
         intake.transfer();
-        lift.transfer();
-        hopper.transfer();
+        deposit.intake();
 //        droneLauncher.transfer();
     }
 }

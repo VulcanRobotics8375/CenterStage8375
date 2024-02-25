@@ -19,9 +19,9 @@ public class Intake extends SubsystemState {
     DcMotorEx extendoLeft, extendoRight;
     DigitalChannel breakBeamFirst;
     DigitalChannel breakBeamSecond;
-    
-    
+    Servo trigger;
 
+    private Toggle planeToggle = new Toggle();
     private Toggle intakeToggle = new Toggle();
     private boolean intaking = false;
     private Toggle extendoToggle = new Toggle();
@@ -33,6 +33,7 @@ public class Intake extends SubsystemState {
     private final double RV4BARCLOSE = 0;
 
     public void init() {
+        trigger = hardwareMap.servo.get("trigger");
         intake1 = hardwareMap.crservo.get("intake1");
         intake2 = hardwareMap.crservo.get("intake2");
         arm = hardwareMap.servo.get("intakeArm");
