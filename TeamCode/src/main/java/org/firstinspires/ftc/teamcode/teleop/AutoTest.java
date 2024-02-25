@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonomous.Paths;
+import org.firstinspires.ftc.teamcode.robot.DrivetrainConfig;
 import org.firstinspires.ftc.teamcode.robot.MainConfig;
 import org.firstinspires.ftc.teamcode.robotcorelib.math.geometry.Vector;
 import org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils;
@@ -27,7 +28,7 @@ import java.util.Objects;
 
 @TeleOp
 public class AutoTest extends OpModePipeline {
-    MainConfig subsystems = new MainConfig();
+    DrivetrainConfig subsystems = new DrivetrainConfig();
     Projection pipeline = new Projection();
 
 

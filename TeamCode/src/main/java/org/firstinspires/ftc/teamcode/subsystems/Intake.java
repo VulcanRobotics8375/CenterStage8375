@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robotcorelib.util.SubsystemState;
@@ -19,18 +21,12 @@ public class Intake extends SubsystemState {
     DcMotorEx extendoLeft, extendoRight;
     DigitalChannel breakBeamFirst;
     DigitalChannel breakBeamSecond;
-    
-    
 
     private Toggle intakeToggle = new Toggle();
     private boolean intaking = false;
     private Toggle extendoToggle = new Toggle();
     private boolean extendoOut = false;
     private boolean depoTransferReady = true;
-    private final double LV4BOPEN = 0;
-    private final double LV4BARCLOSE = 0;
-    private final double RV4BOPEN = 0;
-    private final double RV4BARCLOSE = 0;
 
     public void init() {
         intake1 = hardwareMap.crservo.get("intake1");
@@ -45,10 +41,10 @@ public class Intake extends SubsystemState {
         extendoRight = hardwareMap.get(DcMotorEx.class, "extendoRight");
 
         extendoLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extendoLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendoLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         extendoRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extendoRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendoRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         breakBeamFirst = hardwareMap.get(DigitalChannel.class, "breakBeamFirst");
         breakBeamFirst.setMode(DigitalChannel.Mode.INPUT);
@@ -79,7 +75,7 @@ public class Intake extends SubsystemState {
             stopIntake();
         }
         if (extendoOut) {
-            extendoOut();
+            extendoTo(500);
         } else {
             extendoIn();
         }
@@ -131,9 +127,9 @@ public class Intake extends SubsystemState {
     public void doorOpen() {
         door.setPosition(0.1528);
     }
-    public void v4barDown() {v4barLeft.setPosition(LV4BARCLOSE);}
-    public void v4barHover() {}
-    public void v4barUp() {}
+    public void v4barDown() {v4barLeft.setPosition(0.0);v4barRight.setPosition(0.0);}
+    public void v4barHover() {v4barLeft.setPosition(0.0);v4barRight.setPosition(0.0);}
+    public void v4barUp() {v4barLeft.setPosition(0.0);v4barRight.setPosition(0.0);}
     public void runIntake() {
         intake1.setPower(-1);
         intake2.setPower(1);
@@ -143,10 +139,12 @@ public class Intake extends SubsystemState {
         intake2.setPower(0);
     }
     public void holdIntake() {
-        intake1.setPower(0.1);
+        intake1.setPower(-0.1);
         intake2.setPower(0.1);
     }
 
     public void extendoIn() {}
-    public void extendoOut() {}
+    public void extendoTo(int pos) {
+        extendoLeft.setTargetPosition(0);
+    }
 }
