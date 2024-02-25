@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+import android.util.Pair;
+
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -6,9 +8,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotcorelib.util.SubsystemState;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
+import org.opencv.core.Scalar;
 
 
 public class Intake extends SubsystemState {
@@ -33,7 +37,12 @@ public class Intake extends SubsystemState {
     private final double RV4BOPEN = 0;
     private final double RV4BARCLOSE = 0;
 
+
+    ElapsedTime timer;
+
     ColorSensor firstColor, secondColor;
+
+    boolean pixels= false;
 
     public void init() {
         trigger = hardwareMap.servo.get("trigger");
@@ -62,6 +71,7 @@ public class Intake extends SubsystemState {
 
         breakBeamSecond = hardwareMap.get(DigitalChannel.class, "breakBeamSecond");
         breakBeamSecond.setMode(DigitalChannel.Mode.INPUT);
+        timer.startTime();
     }
 
     public void intake() {
@@ -111,6 +121,52 @@ public class Intake extends SubsystemState {
         }
     }
 
+    public Pair<String, String> getPixels() {
+        Scalar c1= new Scalar(firstColor.red(), firstColor.green(), firstColor.blue());
+        Scalar c2 = new Scalar(secondColor.red(),secondColor.green(), secondColor.blue());
+
+    }
+    public Pair<Boolean,Boolean> getBreaks() {
+        return new Pair<>(breakBeamFirst.getState(), breakBeamSecond.getState());
+    }
+    private boolean inRange(Scalar c, Scalar lowHSV, Scalar highHSV) {
+        if (c != null) {
+            if (lowHSV.val[0] <= c.val[0] && c.val[0] <= highHSV.val[0]) {
+                if (lowHSV.val[1] <= c.val[1] && c.val[1] <= highHSV.val[1]) {
+                    return lowHSV.val[2] <= c.val[2] && c.val[2] <= highHSV.val[2];
+                }
+            }
+        }
+        return false;
+    }
+    private Scalar rgb_to_hsv(double r, double g, double b)
+    {
+        r = r / 255.0;
+        g = g / 255.0;
+        b = b / 255.0;
+
+        // h, s, v = hue, saturation, value
+        double cmax = Math.max(r, Math.max(g, b)); // maximum of r, g, b
+        double cmin = Math.min(r, Math.min(g, b)); // minimum of r, g, b
+        double diff = cmax - cmin; // diff of cmax and cmin.
+        double h = -1, s = -1;
+        if (cmax == cmin)
+            h = 0;
+        else if (cmax == r)
+            h = (60 * ((g - b) / diff) + 180) % 180;
+        else if (cmax == g)
+            h = (60 * ((b - r) / diff) + 60) % 180;
+        else if (cmax == b)
+            h = (60 * ((r - g) / diff) + 120) % 180;
+        if (cmax == 0)
+            s = 0;
+        else
+            s = (diff / cmax) * 100;
+        double v = cmax * 100;
+        return new Scalar(h,s,v);
+    }
+
+
     public void updateGamepad(boolean intake, boolean extend) {
         intakeToggle.toggle(intake);
         extendoToggle.toggle(extend);
@@ -153,6 +209,10 @@ public class Intake extends SubsystemState {
     public void runIntake() {
         intake1.setPower(-1);
         intake2.setPower(1);
+    }
+    public void reverseIntake() {
+        intake1.setPower(1);
+        intake2.setPower(-1);
     }
     public void stopIntake() {
         intake1.setPower(0);

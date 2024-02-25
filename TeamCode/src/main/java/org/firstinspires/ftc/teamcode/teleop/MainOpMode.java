@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import android.util.Pair;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robot.MainConfig;
 import org.firstinspires.ftc.teamcode.robotcorelib.opmode.OpModePipeline;
@@ -16,6 +19,8 @@ public class MainOpMode extends OpModePipeline {
     private Toggle stateToggle = new Toggle();
 
     private double lastTime = 0.0;
+    ElapsedTime timer = new ElapsedTime();
+    double timed=0.0;
 
     @Override
     public void init() {
@@ -31,6 +36,14 @@ public class MainOpMode extends OpModePipeline {
             case INTAKE:
                 subsystems.intake();
                 telemetry.addData("state", "INTAKE");
+                Pair<Boolean,Boolean> breaks = subsystems.intake.getBreaks();
+                if (!breaks.first&&!breaks.second && timed == 0.0) {
+                    timed = timer.milliseconds();
+                }
+                if (timed > timer.milliseconds()+1000) {
+                    timed = 0.0;
+                    robotState = RobotState.TRANSFER;
+                }
                 break;
             case TRANSFER:
                 subsystems.transfer();

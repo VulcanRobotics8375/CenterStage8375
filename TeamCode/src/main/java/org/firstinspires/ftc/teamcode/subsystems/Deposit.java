@@ -116,7 +116,7 @@ public class Deposit extends SubsystemState {
 
     public boolean liftInMiddle(){
         double middle = (liftLeft.getCurrentPosition() - liftRight.getCurrentPosition())/2.0;
-        return (Math.abs(middle)<1);
+        return (Math.abs(middle)<20);
     }
 
     public void run2Axis(Point target) {
@@ -124,7 +124,7 @@ public class Deposit extends SubsystemState {
         double x = (liftLeft.getCurrentPosition() - liftRight.getCurrentPosition())/2.0;
         double My = target.y;
         double Mx = target.x;
-        if (target.y < 1 && Math.abs(x) > 1) {
+        if (target.y < 20 && Math.abs(x) > 20) {
             Mx = 0;
             My = y;
         }

@@ -77,14 +77,14 @@ public class MainConfig extends RobotConfig {
     public void deposit() {
         drivetrain.deposit();
         intake.deposit();
-        deposit.intake();
+        deposit.deposit();
 //        droneLauncher.deposit();
     }
 
     public void transfer() {
         drivetrain.transfer();
         intake.transfer();
-        deposit.intake();
+        deposit.transfer();
 //        droneLauncher.transfer();
     }
 }
