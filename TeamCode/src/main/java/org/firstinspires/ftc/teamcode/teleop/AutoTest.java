@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.AutoTask;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.Point;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
+import org.firstinspires.ftc.teamcode.vision.apriltag.AprilTagLight;
 import org.firstinspires.ftc.teamcode.vision.apriltag.testing.Projection;
 import org.firstinspires.ftc.teamcode.vision.pixel.RectPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -29,9 +30,9 @@ import java.util.Objects;
 
 @TeleOp
 public class AutoTest extends OpModePipeline {
+    DrivetrainConfig subsystems = new DrivetrainConfig();
+    AprilTagLight pipeline = new AprilTagLight();
 //    DrivetrainConfig subsystems = new DrivetrainConfig();
-
-    Projection pipeline = new Projection();
 
     private BNO055IMU imu;
     double foresight;
@@ -64,10 +65,12 @@ public class AutoTest extends OpModePipeline {
 //        subsystems.intake.breakBeamTelemetry();
         telemetry.addData("FPS:", camera.getFps());
         robotPose = Robot.getRobotPose();
-        pipeline.updateAngles(imu.getAngularOrientation().firstAngle);
-//        Colors = pipeline.getColors();
-//        telemetry.addData("X: ", robotPose.getX());
-//        telemetry.addData("Y: ", robotPose.getY());
+        pipeline.updateAngles(subsystems.drivetrain.getIMU().getAngularOrientation().firstAngle);
+        telemetry.addData("X: ", robotPose.getX());
+        telemetry.addData("Y: ", robotPose.getY());
+        Pose2d cP = pipeline.getPose();
+        telemetry.addData("XCAM ", cP.getX());
+        telemetry.addData("YCAM: ", cP.getY());
         telemetry.update();
     }
     private void cameraInit() {
