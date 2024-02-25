@@ -1,28 +1,18 @@
-//import com.acmerobotics.roadrunner.geometry.Pose2d;
-//import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-//
-//import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-//import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-//import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-//import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-//import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-//import org.firstinspires.ftc.teamcode.robot.MainConfig;
-//import org.firstinspires.ftc.teamcode.robotcorelib.opmode.OpModePipeline;
-//import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
-//import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
-//import org.firstinspires.ftc.teamcode.vision.apriltag.testing.AprilTagDetectionPipeline;
-//import org.openftc.apriltag.AprilTagDetection;
-//import org.openftc.easyopencv.OpenCvCamera;
-//import org.openftc.easyopencv.OpenCvCameraFactory;
-//import org.openftc.easyopencv.OpenCvCameraRotation;
-//
-//import java.util.ArrayList;
-//
-//@TeleOp
-//public class OdometryTest extends OpModePipeline {
-//
-//    MainConfig subsystems = new MainConfig();
-//
+package org.firstinspires.ftc.teamcode.teleop;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.robot.MainConfig;
+import org.firstinspires.ftc.teamcode.robotcorelib.opmode.OpModePipeline;
+import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.RobotRunMode;
+
+@TeleOp
+public class OdometryTest extends OpModePipeline {
+
+    MainConfig subsystems = new MainConfig();
+
 //    OpenCvCamera camera;
 //    AprilTagDetectionPipeline aprilTagDetectionPipeline;
 //
@@ -46,11 +36,11 @@
 //    final float DECIMATION_LOW = 2;
 //    final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 1.0f;
 //    final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
-//
-//    public void init() {
-//        super.subsystems = subsystems;
-//        runMode = RobotRunMode.TELEOP;
-//        super.init();
+
+    public void init() {
+        super.subsystems = subsystems;
+        runMode = RobotRunMode.TELEOP;
+        super.init();
 //        super.init();
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 //        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -68,11 +58,11 @@
 //
 //            }
 //        });
-//    }
-//
-//    public void loop () {
-//        Robot.update();
-//
+    }
+
+    public void loop () {
+        Robot.update();
+
 //        ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
 //
 //        // If there's been a new frame...
@@ -114,9 +104,11 @@
 //                }
 //            }
 //        }
-//
-//        Pose2d robotPose = Robot.getRobotPose();
-//        telemetry.addData("left wheel", subsystems.localizer.getWheelPositions().get(0));
-//        telemetry.addData("right wheel", subsystems.localizer.getWheelPositions().get(1));
-//    }
-//}
+
+        Pose2d robotPose = Robot.getRobotPose();
+        telemetry.addData("left wheel", subsystems.localizer.getWheelPositions().get(0));
+        telemetry.addData("right wheel", subsystems.localizer.getWheelPositions().get(1));
+        telemetry.addData("middle wheel", subsystems.localizer.getWheelPositions().get(2));
+
+    }
+}

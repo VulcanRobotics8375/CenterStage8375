@@ -17,8 +17,8 @@ public class ServoTest extends OpMode {
     // left: 0.575, right:394
 
     public void init() {
-        servo = hardwareMap.servo.get("dV4barRight");
-//        servo1 = hardwareMap.servo.get("dV4barRight");
+        servo = hardwareMap.servo.get("iV4barRight");
+//        servo1 = hardwareMap.servo.get("iV4BarRight");
 //        v4barLeftEnc = hardwareMap.analogInput.get("dV4BarLEnc");
     }
 

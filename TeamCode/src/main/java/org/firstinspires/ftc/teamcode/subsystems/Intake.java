@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotcorelib.util.SubsystemState;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.Toggle;
@@ -19,21 +20,17 @@ public class Intake extends SubsystemState {
     DcMotorEx extendoLeft, extendoRight;
     DigitalChannel breakBeamFirst;
     DigitalChannel breakBeamSecond;
-    Servo trigger;
 
-    private Toggle planeToggle = new Toggle();
     private Toggle intakeToggle = new Toggle();
     private boolean intaking = false;
     private Toggle extendoToggle = new Toggle();
     private boolean extendoOut = false;
     private boolean depoTransferReady = true;
-    private final double LV4BOPEN = 0;
-    private final double LV4BARCLOSE = 0;
-    private final double RV4BOPEN = 0;
-    private final double RV4BARCLOSE = 0;
+
+    private ElapsedTime transferTimer = new ElapsedTime();
+    private Toggle transferToggle = new Toggle();
 
     public void init() {
-        trigger = hardwareMap.servo.get("trigger");
         intake1 = hardwareMap.crservo.get("intake1");
         intake2 = hardwareMap.crservo.get("intake2");
         arm = hardwareMap.servo.get("intakeArm");
@@ -59,6 +56,7 @@ public class Intake extends SubsystemState {
     }
 
     public void intake() {
+        transferToggle.toggle(false);
         armDown();
         doorClose();
         if (intakeToggle.getToggle()) {
@@ -87,6 +85,7 @@ public class Intake extends SubsystemState {
     }
 
     public void deposit() {
+        transferToggle.toggle(false);
         armDown();
         v4barUp();
         stopIntake();
@@ -94,6 +93,10 @@ public class Intake extends SubsystemState {
     }
 
     public void transfer() {
+        transferToggle.toggle(true);
+        if (transferToggle.getToggle()) {
+            transferTimer.reset();
+        }
         armDown();
         v4barUp();
         if(transferReady()) {
@@ -118,7 +121,7 @@ public class Intake extends SubsystemState {
         return v4barIsUp() && depoTransferReady;
     }
 
-    public boolean v4barIsUp() { return false; }
+    public boolean v4barIsUp() { return transferTimer.milliseconds() > 1500; }
 
     public void armDown() {
         arm.setPosition(0.302);
@@ -142,7 +145,8 @@ public class Intake extends SubsystemState {
         v4barRight.setPosition(0.3355);
     }
     public void v4barUp() {
-        v4barLeft.setPosition(0.7678);
+        v4barLeft.setPosition(0.899);
+        v4barRight.setPosition(0);
     }
     public void runIntake() {
         intake1.setPower(-1);
@@ -158,5 +162,10 @@ public class Intake extends SubsystemState {
     }
 
     public void extendoIn() {}
-    public void extendoOut() {}
+    public void extendoOut() {
+
+    }
+    public void extendoTo(int pos) {
+
+    }
 }

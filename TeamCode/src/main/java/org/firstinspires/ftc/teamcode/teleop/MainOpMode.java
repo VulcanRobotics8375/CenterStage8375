@@ -30,6 +30,7 @@ public class MainOpMode extends OpModePipeline {
         switch (robotState) {
             case INTAKE:
                 subsystems.intake();
+                subsystems.intake.updateGamepad(gamepad1.left_bumper, gamepad1.right_bumper);
                 telemetry.addData("state", "INTAKE");
                 break;
             case TRANSFER:
@@ -44,6 +45,7 @@ public class MainOpMode extends OpModePipeline {
                 if (stateToggle.toggle(gamepad1.a)) {
                     robotState = RobotState.INTAKE;
                 }
+                subsystems.deposit.updateGamepad(gamepad2.left_stick_x, -gamepad2.left_stick_y, gamepad2.left_bumper, gamepad2.right_bumper);
                 telemetry.addData("state", "DEPOSIT");
                 break;
         }

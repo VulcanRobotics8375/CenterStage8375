@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot;
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.RobotConfig;
 import org.firstinspires.ftc.teamcode.subsystems.Deposit;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.subsystems.Hopper;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 /*
@@ -77,14 +76,14 @@ public class MainConfig extends RobotConfig {
     public void deposit() {
         drivetrain.deposit();
         intake.deposit();
-        deposit.intake();
+        deposit.deposit();
 //        droneLauncher.deposit();
     }
 
     public void transfer() {
         drivetrain.transfer();
         intake.transfer();
-        deposit.intake();
+        deposit.transfer();
 //        droneLauncher.transfer();
     }
 }
