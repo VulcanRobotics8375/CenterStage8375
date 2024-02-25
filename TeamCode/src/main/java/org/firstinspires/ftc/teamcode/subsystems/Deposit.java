@@ -138,8 +138,8 @@ public class Deposit extends SubsystemState {
         v4barRight.setPosition(0.0);
     }
     public void v4barIn() {
-        v4barLeft.setPosition(0.0);
-        v4barRight.setPosition(0.0);
+        v4barLeft.setPosition(0.873);
+        v4barRight.setPosition(0.);
     }
     public void fingerOpen() {
         depoFinger.setPosition(0.927);

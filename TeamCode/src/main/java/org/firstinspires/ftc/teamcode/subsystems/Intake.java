@@ -132,9 +132,18 @@ public class Intake extends SubsystemState {
     public void doorOpen() {
         door.setPosition(0.1528);
     }
-    public void v4barDown() {v4barLeft.setPosition(LV4BARCLOSE);}
-    public void v4barHover() {}
-    public void v4barUp() {}
+    public void v4barDown() {
+        v4barLeft.setPosition(0.4394);
+        v4barRight.setPosition(0.987);
+
+    }
+    public void v4barHover() {
+        v4barLeft.setPosition(0.7678);
+        v4barRight.setPosition(0.3355);
+    }
+    public void v4barUp() {
+        v4barLeft.setPosition(0.7678);
+    }
     public void runIntake() {
         intake1.setPower(-1);
         intake2.setPower(1);

@@ -32,8 +32,9 @@ import java.util.Objects;
 public class AutoTest extends OpModePipeline {
     DrivetrainConfig subsystems = new DrivetrainConfig();
     AprilTagLight pipeline = new AprilTagLight();
+//    DrivetrainConfig subsystems = new DrivetrainConfig();
 
-
+    private BNO055IMU imu;
     double foresight;
     private OpenCvWebcam camera;
 
@@ -44,11 +45,18 @@ public class AutoTest extends OpModePipeline {
 
     @Override
     public void init() {
-        super.subsystems = subsystems;
+//        super.subsystems = subsystems;
         runMode = RobotRunMode.TELEOP;
         super.init();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+        imu.initialize(parameters);
         cameraInit();
-        subsystems.drivetrain.init();
+//        subsystems.drivetrain.init();
 
     }
 
