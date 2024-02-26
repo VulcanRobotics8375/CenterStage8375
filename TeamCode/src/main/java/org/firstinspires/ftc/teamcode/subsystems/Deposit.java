@@ -76,7 +76,7 @@ public class Deposit extends SubsystemState {
         v4barOut();
         if (v4barHasClearance()) {
             if (liftHasClearance()) {
-                target = new Point(target.x + 0.01*stick.x, target.y + 0.01*stick.y);
+                target = new Point(target.x + 0.0033*stick.x, target.y + 0.01*stick.y);
                 if (v4barIsOut()) {
                     if (fullFingers.getToggle()) {
                         fingerOpen();
@@ -133,12 +133,8 @@ public class Deposit extends SubsystemState {
     public void run2Axis(Point target) {
         double y = (liftLeft.getCurrentPosition() + liftRight.getCurrentPosition())/2.0;
         double x = (liftLeft.getCurrentPosition() - liftRight.getCurrentPosition())/2.0;
-        double My = target.y;
-        double Mx = target.x;
-        if (target.y < 20 && Math.abs(x) > 20) {
-            Mx = 0;
-            My = y;
-        }
+        double My = target.y*Y_MAX_POS;
+        double Mx = target.x*X_MAX_POS;
         liftLeft.setTargetPosition((int) (My + Mx));
         liftRight.setTargetPosition((int) (My - Mx));
         liftLeft.setPower(0.6);
@@ -153,8 +149,8 @@ public class Deposit extends SubsystemState {
         v4barRight.setPosition(0.394);
     }
     public void v4barIn() {
-        v4barLeft.setPosition(0.1);
-        v4barRight.setPosition(0.879);
+        v4barLeft.setPosition(0.10682);
+        v4barRight.setPosition(0.872);
     }
     public void fingerOpen() {
         depoFinger.setPosition(0.927);

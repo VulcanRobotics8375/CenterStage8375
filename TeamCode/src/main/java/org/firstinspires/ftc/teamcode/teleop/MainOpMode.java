@@ -37,12 +37,11 @@ public class MainOpMode extends OpModePipeline {
                 subsystems.intake();
                 subsystems.intake.updateGamepad(gamepad1.left_bumper, gamepad1.right_bumper);
                 telemetry.addData("state", "INTAKE");
-                Pair<Boolean,Boolean> breaks = subsystems.intake.getBreaks();
-                if (!breaks.first&&!breaks.second && timed == 0.0) {
-                    timed = timer.milliseconds();
-                }
-                if (timed > timer.milliseconds()+1000) {
-                    timed = 0.0;
+//                Pair<Boolean,Boolean> breaks = subsystems.intake.getBreaks();
+//                if (!breaks.first&&!breaks.second && timed == 0.0) {
+//                    timed = timer.milliseconds();
+//                }
+                if (stateToggle.toggle(gamepad1.a)) {
                     robotState = RobotState.TRANSFER;
                 }
                 break;

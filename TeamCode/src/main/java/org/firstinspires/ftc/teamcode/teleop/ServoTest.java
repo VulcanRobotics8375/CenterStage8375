@@ -11,21 +11,26 @@ public class ServoTest extends OpMode {
 
     Servo servo;
     Servo servo1;
-    double servoPos = 0.5;
-    double servo1Pos = 0.394;
+    double servoPos = 0.1;
+    double servo1Pos = 0.879;
     AnalogInput v4barLeftEnc, v4barRightEnc;
     // left: 0.575, right:394
 
     public void init() {
         servo = hardwareMap.servo.get("iV4barRight");
+        servo1 = hardwareMap.servo.get("iV4barLeft");
 //        servo1 = hardwareMap.servo.get("iV4BarRight");
 //        v4barLeftEnc = hardwareMap.analogInput.get("dV4BarLEnc");
     }
 
     public void loop () {
-        servoPos = Range.clip(servoPos - 0.01*gamepad1.left_stick_y, 0.01, 0.99);
+        servoPos = servoPos - 0.01*gamepad1.left_stick_y;
+        servo1Pos = servo1Pos + 0.01*gamepad1.left_stick_y;
         servo.setPosition(servoPos);
-        telemetry.addData("servo right pos", servoPos);
+        servo1.setPosition(servo1Pos);
+        telemetry.addData("servo pos", servoPos);
+        telemetry.addData("servo1 pos", servo1Pos);
+
 
 //        servo1Pos = Range.clip(servo1Pos + 0.01*gamepad1.right_stick_y, 0.01, 0.99);
 //        servo1.setPosition(servo1Pos);

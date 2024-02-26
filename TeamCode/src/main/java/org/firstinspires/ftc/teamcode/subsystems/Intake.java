@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -47,27 +48,30 @@ public class Intake extends SubsystemState {
         arm = hardwareMap.servo.get("intakeArm");
         v4barLeft = hardwareMap.servo.get("iV4barLeft");
         v4barRight = hardwareMap.servo.get("iV4barRight");
-        v4barLeftEnc = hardwareMap.get(AnalogInput.class, "v4barLeftEnc");
-        v4barRightEnc = hardwareMap.get(AnalogInput.class, "v4barRightEnc");
+//        v4barLeftEnc = hardwareMap.get(AnalogInput.class, "v4barLeftEnc");
+//        v4barRightEnc = hardwareMap.get(AnalogInput.class, "v4barRightEnc");
         door = hardwareMap.servo.get("door");
         extendoLeft = hardwareMap.get(DcMotorEx.class, "extendoLeft");
         extendoRight = hardwareMap.get(DcMotorEx.class, "extendoRight");
 
-        firstColor = hardwareMap.colorSensor.get("Color1");
-        secondColor = hardwareMap.colorSensor.get("Color2");
+//        firstColor = hardwareMap.colorSensor.get("Color1");
+//        secondColor = hardwareMap.colorSensor.get("Color2");
 
+        extendoLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         extendoLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extendoLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendoLeft.setTargetPosition(0);
+        extendoLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         extendoRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extendoRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendoRight.setTargetPosition(0);
+        extendoRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        breakBeamFirst = hardwareMap.get(DigitalChannel.class, "breakBeamFirst");
-        breakBeamFirst.setMode(DigitalChannel.Mode.INPUT);
-
-        breakBeamSecond = hardwareMap.get(DigitalChannel.class, "breakBeamSecond");
-        breakBeamSecond.setMode(DigitalChannel.Mode.INPUT);
-        timer.startTime();
+//        breakBeamFirst = hardwareMap.get(DigitalChannel.class, "breakBeamFirst");
+//        breakBeamFirst.setMode(DigitalChannel.Mode.INPUT);
+//
+//        breakBeamSecond = hardwareMap.get(DigitalChannel.class, "breakBeamSecond");
+//        breakBeamSecond.setMode(DigitalChannel.Mode.INPUT);
+//        timer.startTime();
     }
 
     public void intake() {
@@ -123,50 +127,49 @@ public class Intake extends SubsystemState {
         }
     }
 
-    public Pair<String, String> getPixels() {
-        Scalar c1= new Scalar(firstColor.red(), firstColor.green(), firstColor.blue());
-        Scalar c2 = new Scalar(secondColor.red(),secondColor.green(), secondColor.blue());
-
-    }
-    public Pair<Boolean,Boolean> getBreaks() {
-        return new Pair<>(breakBeamFirst.getState(), breakBeamSecond.getState());
-    }
-    private boolean inRange(Scalar c, Scalar lowHSV, Scalar highHSV) {
-        if (c != null) {
-            if (lowHSV.val[0] <= c.val[0] && c.val[0] <= highHSV.val[0]) {
-                if (lowHSV.val[1] <= c.val[1] && c.val[1] <= highHSV.val[1]) {
-                    return lowHSV.val[2] <= c.val[2] && c.val[2] <= highHSV.val[2];
-                }
-            }
-        }
-        return false;
-    }
-    private Scalar rgb_to_hsv(double r, double g, double b)
-    {
-        r = r / 255.0;
-        g = g / 255.0;
-        b = b / 255.0;
-
-        // h, s, v = hue, saturation, value
-        double cmax = Math.max(r, Math.max(g, b)); // maximum of r, g, b
-        double cmin = Math.min(r, Math.min(g, b)); // minimum of r, g, b
-        double diff = cmax - cmin; // diff of cmax and cmin.
-        double h = -1, s = -1;
-        if (cmax == cmin)
-            h = 0;
-        else if (cmax == r)
-            h = (60 * ((g - b) / diff) + 180) % 180;
-        else if (cmax == g)
-            h = (60 * ((b - r) / diff) + 60) % 180;
-        else if (cmax == b)
-            h = (60 * ((r - g) / diff) + 120) % 180;
-        if (cmax == 0)
-            s = 0;
-        else
-            s = (diff / cmax) * 100;
-        double v = cmax * 100;
-        return new Scalar(h,s,v);
-    }
+//    public Pair<String, String> getPixels() {
+//        Scalar c1= new Scalar(firstColor.red(), firstColor.green(), firstColor.blue());
+//        Scalar c2 = new Scalar(secondColor.red(),secondColor.green(), secondColor.blue());
+//    }
+//    public Pair<Boolean,Boolean> getBreaks() {
+//        return new Pair<>(breakBeamFirst.getState(), breakBeamSecond.getState());
+//    }
+//    private boolean inRange(Scalar c, Scalar lowHSV, Scalar highHSV) {
+//        if (c != null) {
+//            if (lowHSV.val[0] <= c.val[0] && c.val[0] <= highHSV.val[0]) {
+//                if (lowHSV.val[1] <= c.val[1] && c.val[1] <= highHSV.val[1]) {
+//                    return lowHSV.val[2] <= c.val[2] && c.val[2] <= highHSV.val[2];
+//                }
+//            }
+//        }
+//        return false;
+//    }
+//    private Scalar rgb_to_hsv(double r, double g, double b)
+//    {
+//        r = r / 255.0;
+//        g = g / 255.0;
+//        b = b / 255.0;
+//
+//        // h, s, v = hue, saturation, value
+//        double cmax = Math.max(r, Math.max(g, b)); // maximum of r, g, b
+//        double cmin = Math.min(r, Math.min(g, b)); // minimum of r, g, b
+//        double diff = cmax - cmin; // diff of cmax and cmin.
+//        double h = -1, s = -1;
+//        if (cmax == cmin)
+//            h = 0;
+//        else if (cmax == r)
+//            h = (60 * ((g - b) / diff) + 180) % 180;
+//        else if (cmax == g)
+//            h = (60 * ((b - r) / diff) + 60) % 180;
+//        else if (cmax == b)
+//            h = (60 * ((r - g) / diff) + 120) % 180;
+//        if (cmax == 0)
+//            s = 0;
+//        else
+//            s = (diff / cmax) * 100;
+//        double v = cmax * 100;
+//        return new Scalar(h,s,v);
+//    }
 
 
     public void updateGamepad(boolean intake, boolean extend) {
@@ -185,7 +188,7 @@ public class Intake extends SubsystemState {
     public boolean v4barIsUp() { return transferTimer.milliseconds() > 1500; }
 
     public void armDown() {
-        arm.setPosition(0.302);
+        arm.setPosition(0.47);
     }
     public void armUp() {
         arm.setPosition(0.99);
@@ -206,8 +209,8 @@ public class Intake extends SubsystemState {
         v4barRight.setPosition(0.3355);
     }
     public void v4barUp() {
-        v4barLeft.setPosition(0.899);
-        v4barRight.setPosition(0);
+        v4barLeft.setPosition(0.849);
+        v4barRight.setPosition(0.097);
     }
     public void runIntake() {
         intake1.setPower(-1);
@@ -226,9 +229,17 @@ public class Intake extends SubsystemState {
         intake2.setPower(0.1);
     }
 
-    public void extendoIn() {}
+    public void extendoIn() {
+        extendoLeft.setTargetPosition(0);
+        extendoLeft.setPower(1);
+        extendoRight.setTargetPosition(0);
+        extendoRight.setPower(1);
+    }
     public void extendoOut() {
-
+        extendoLeft.setTargetPosition(400);
+        extendoLeft.setPower(1);
+        extendoRight.setTargetPosition(400);
+        extendoRight.setPower(1);
     }
     public void extendoTo(int pos) {
 
