@@ -20,9 +20,9 @@ import org.firstinspires.ftc.teamcode.robotcorelib.util.hardware.Encoder;
 public class Deposit extends SubsystemState {
     DcMotorEx liftLeft, liftRight;
     Servo v4barLeft, v4barRight;
-    AnalogInput v4barLeftEnc, v4barRightEnc;
+//    AnalogInput v4barLeftEnc, v4barRightEnc;
     Servo depoFinger;
-    ColorSensor colorSensorFirst, colorSensorLast;
+//    ColorSensor colorSensorFirst, colorSensorLast;
 
     private final int Y_MAX_POS = 2740;
     private final int X_MAX_POS = 590;

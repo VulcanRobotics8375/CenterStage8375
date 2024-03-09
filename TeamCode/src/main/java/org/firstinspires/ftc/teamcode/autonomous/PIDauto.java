@@ -65,7 +65,10 @@ public class PIDauto extends AutoPipeline {
             }
         }
 
-        follow(new Pose2d(), subsystems.drivetrain);
+        follow(new Pose2d(0,0,0), subsystems.drivetrain);
+        if (pipeline.detections.size()>=3) {
+            Robot.setRobotPose(pipeline.getPose());
+        }
 
 
 
@@ -83,7 +86,7 @@ public class PIDauto extends AutoPipeline {
             double idealX = Math.sin(pose.getHeading())*speed;
             double idealY = Math.cos(pose.getHeading())*speed;
 
-            dt.mecanumDrive(pidX.getOutput(robotVelocity.getX(), idealX), pidY.getOutput(robotVelocity.getY(), idealY),0); // y = cos, x = sin
+            dt.mecanumDrive(pidX.getOutput(robotVelocity.getX(), idealX), pidY.getOutput(robotVelocity.getY(), idealY),pidT.getOutput(robotPose.getHeading(),pose.getHeading())); // y = cos, x = sin
         }
     }
 

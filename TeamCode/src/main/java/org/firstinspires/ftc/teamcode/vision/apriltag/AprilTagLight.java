@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.vision.apriltag;
 
 import android.annotation.SuppressLint;
 
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Rotation2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -45,7 +43,7 @@ public class AprilTagLight extends AprilTagDetectionPipeline {
     Scalar lowBlueBound = new Scalar(100, 40, 40); // set lower and upper bounds for the color we want to recognize (blue in this case)
     Scalar highBlueBound = new Scalar(125, 500, 500); //hue is out of 180 here, double it if searching it up online due to online websites going from 0-360
     private final Mat grey = new Mat();
-    private ArrayList<AprilTagDetection> detections = new ArrayList<>();
+    public ArrayList<AprilTagDetection> detections = new ArrayList<>();
 
     private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
     private final Object detectionsUpdateSync = new Object();
@@ -146,7 +144,7 @@ public class AprilTagLight extends AprilTagDetectionPipeline {
         }
         x /= detections.size();
         y /= detections.size();
-        return new Pose2d(new Vector2d(x,y),0);
+        return new Pose2d(x,y,0);
     }
     public int getProp(Scalar lowBound, Scalar highBound) {
         Imgproc.cvtColor(mat, hsvColor, Imgproc.COLOR_RGB2HSV); // change the color space from rgb to HSV (Hue, Saturation, Value)
@@ -161,6 +159,7 @@ public class AprilTagLight extends AprilTagDetectionPipeline {
         Imgproc.rectangle(mat, leftRect, new Scalar(255,255,255), 2); // draw the rectangles on the output matrix
 //        Imgproc.rectangle(mat, rightRect, blue, 2);
         Imgproc.rectangle(mat, midRect, new Scalar(255,255,255), 2);
+        Imgproc.rectangle(mat, rightRect, new Scalar(255,255,255), 2);
 
         if (leftValue > midValue && leftValue > rightValue) {
             return 1;
