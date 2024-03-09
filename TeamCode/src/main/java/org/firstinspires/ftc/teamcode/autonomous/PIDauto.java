@@ -108,5 +108,3 @@ public class PIDauto extends AutoPipeline {
         });
     }
 }
-
-}
