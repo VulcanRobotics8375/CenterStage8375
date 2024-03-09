@@ -28,8 +28,8 @@ public class Projection extends AprilTagDetectionPipeline {
 
     public double tilt = 0;
 
-    final int SCREENX = 1280;
-    final int SCREENY = 720;
+    final int SCREENX = 640;
+    final int SCREENY = 1200;
     public double pan = 0;
 
     public double L = 500;

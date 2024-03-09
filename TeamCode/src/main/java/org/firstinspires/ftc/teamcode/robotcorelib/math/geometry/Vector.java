@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.robotcorelib.math.geometry;
 
 public class Vector {
 
-    public final double x;
-    public final double y;
+    public double x;
+    public double y;
 
     public Vector(double x, double y) {
         this.x = x;
