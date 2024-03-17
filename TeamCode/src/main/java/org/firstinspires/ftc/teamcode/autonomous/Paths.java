@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.robotcorelib.motion.path.Path;
 import org.firstinspires.ftc.teamcode.robotcorelib.motion.path.PathBuilder;
 import org.firstinspires.ftc.teamcode.robotcorelib.robot.Robot;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Pose2d;
 
 public class Paths {
     private double speed;

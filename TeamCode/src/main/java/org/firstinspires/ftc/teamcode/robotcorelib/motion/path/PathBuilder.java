@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.robotcorelib.motion.path;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-
 import org.firstinspires.ftc.teamcode.robotcorelib.math.utils.MathUtils;
 import org.firstinspires.ftc.teamcode.robotcorelib.util.PathPoint;
+import org.firstinspires.ftc.teamcode.robotcorelib.util.Pose2d;
 
 import java.util.ArrayList;
 import java.util.HashMap;

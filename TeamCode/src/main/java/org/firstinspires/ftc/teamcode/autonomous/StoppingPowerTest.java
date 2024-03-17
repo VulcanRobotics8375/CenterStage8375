@@ -27,13 +27,12 @@ public class StoppingPowerTest extends AutoPipeline {
 
     Vector motorPowers;
 
-    public StoppingPowerTest(Vector pos, Vector posIdeal){
+    public StoppingPowerTest(Vector pos){
         timer.startTime();
         this.pos = pos;
-        this.posIdeal = posIdeal;
     }
 
-    public void update(Vector pos) {
+    public void update(Vector pos, Vector posIdeal) {
         dT = lastTime - timer.milliseconds();
         initialVelocity = finalVelocity;
         finalVelocity = new Vector((this.pos.x - pos.x)/dT, (this.pos.y - pos.y)/dT);
@@ -48,7 +47,7 @@ public class StoppingPowerTest extends AutoPipeline {
     public Vector stop(Vector motorPowers){
         double idealX = idealChange.x;
         double idealY = idealChange.y;
-        if (Math.abs(idealX)<=Math.abs(posEstimate.x) || Math.abs(idealY)<=Math.abs(posEstimate.y)) {return motorPowers;}
+        if (Math.abs(idealX)<=Math.abs(posEstimate.x)+1.0 || Math.abs(idealY)<=Math.abs(posEstimate.y)+1.0) {return motorPowers;}
         return new Vector(pidx.getOutput(finalVelocity.x,idealX),pidy.getOutput(finalVelocity.y,idealY));
     }
 
